@@ -1,0 +1,6 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "learn", "runtimeExecutable": "npm", "runtimeArgs": ["--prefix", "C:\learning-page", "run", "dev", "--", "--port", "3200"], "port": 3200 }
+  ]
+}
