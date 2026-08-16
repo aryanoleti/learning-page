@@ -2,410 +2,406 @@ import type { Checkpoint } from "./types";
 
 /* The second question of each unit check.
 
-   Every lesson is gated by two questions. The first is the lesson's own final
-   quiz (a fair restatement of the main idea); this file holds the second,
-   which is deliberately harder and gets harder again as the course goes on:
+   Two rules govern every option set here, both enforced by
+   tools/check-questions.mjs:
 
-     Levels 1–2  four options, one clearly correct
-     Levels 3–4  four or five options with plausible distractors, often
-                 requiring a calculation rather than recall
-     Levels 5–7  five options, several defensible, asking which is *most*
-                 correct — the distractors are true statements that do not
-                 answer the question
+   1. The correct answer is NOT the longest option. An earlier version of this
+      file had the answer as the longest line in all 27 questions, which meant
+      the whole course could be passed by picking the wordiest choice without
+      reading a word. Options now sit in a similar length band, and the answer
+      is often the shortest.
 
-   Distractors are written to catch a specific misunderstanding rather than
-   to pad the list, so a wrong answer tells the reader something. */
+   2. Distractors are real misconceptions, not filler. Each wrong option is
+      something a half-attentive reader would actually believe — a rule
+      misapplied, a ratio read backwards, an effect mistaken for its cause.
+      That is what makes a question tricky, rather than merely long.
+
+   Difficulty rises with the level: Levels 1-2 have one defensible answer,
+   Levels 3-4 usually need a calculation, and Levels 5-7 ask which of several
+   true-sounding statements actually answers the question asked. */
 
 export const SECOND_QUESTIONS: Record<string, Checkpoint> = {
   /* ---------------- Level 1 ---------------- */
   "what-a-share-is": {
     id: "l1-1-q2",
     question:
-      "A company earns ₹200 cr and owes lenders ₹40 cr of interest for the year. Its owners are unhappy. What is the one thing that cannot be true?",
+      "A company earns ₹200 cr and owes ₹40 cr of interest. Owners are unhappy with their share. Which statement is impossible?",
     options: [
-      "The ₹40 cr was paid before anything reached owners",
-      "Owners received less than ₹160 cr after tax",
-      "Lenders were paid less than they were owed because profits disappointed",
-      "Owners have a vote on some company decisions",
+      "Interest was paid before owners saw anything",
+      "Owners received under ₹160 cr once tax was paid",
+      "Lenders took a cut because profits disappointed",
+      "Owners still hold a vote on certain decisions",
     ],
     answer: 2,
     explain:
-      "Lenders hold a fixed claim that ranks ahead of owners. Disappointing profit reduces what owners receive; it does not reduce what lenders are contractually owed.",
+      "Lenders hold a fixed claim ranking ahead of owners. Weak profit shrinks what owners get; it does not reduce what lenders are contractually owed.",
   },
   "why-companies-sell-shares": {
     id: "l1-2-q2",
     question:
-      "A company issues new shares, doubling its share count, and uses the cash to buy a factory that adds nothing to profit. What happened to existing owners?",
+      "A company doubles its share count and spends the cash on a factory that adds no profit. What happened to existing owners?",
     options: [
-      "Nothing — the company has more assets now",
-      "They are better off, because the company is larger",
-      "Their share of a roughly unchanged profit halved, so they are worse off",
-      "They automatically received extra shares to compensate",
+      "Nothing — the company owns more than before",
+      "They gained, since the business is now larger",
+      "Their claim on an unchanged profit halved",
+      "They were issued extra shares to compensate",
     ],
     answer: 2,
     explain:
-      "Dilution only pays off if the money raised earns more than it cost. Doubling the share count while profit stays flat halves each owner's claim.",
+      "Dilution only pays off if the money raised earns more than it cost. Twice the shares against flat profit halves each owner's claim.",
   },
   "how-a-market-sets-a-price": {
     id: "l1-3-q2",
     question:
-      "A company announces profits far above what anyone expected, and the price barely moves. What is the most likely explanation?",
+      "A company beats profit expectations by a wide margin and the price barely moves. The likeliest reason is that investors:",
     options: [
-      "The market has not processed the news yet",
-      "Investors think the surprise came from something that will not repeat",
-      "Good news never moves prices",
-      "The exchange suspended trading",
+      "have not finished reading the announcement",
+      "think the surprise came from something one-off",
+      "always ignore good news about company profits",
+      "were prevented from trading during the day",
     ],
     answer: 1,
     explain:
-      "Prices respond to expected future earnings. A one-off gain beats expectations for this year while changing nothing about the years being priced.",
+      "Prices reflect expected future earnings. A one-off gain beats this year's forecast while changing nothing about the years being priced.",
   },
   "risk-return-tradeoff": {
     id: "l1-4-q2",
     question:
-      "Over ten years an investment returns +40%, −30%, +40%, −30% and so on, alternating. A friend says the average is +5% a year so it must grow. What is wrong with that?",
+      "An investment alternates +40% and −30% year after year. A friend says the average is +5%, so ₹100 must grow. What is wrong?",
     options: [
-      "Nothing — the arithmetic is correct",
-      "Repeated gains and losses compound, so ₹100 grows and shrinks multiplicatively and ends below where the simple average suggests",
-      "Averages cannot be calculated over ten years",
-      "The returns must be wrong",
+      "The arithmetic average has been calculated wrongly",
+      "Averages cannot be taken over so few years",
+      "Gains and losses compound, so ₹100 shrinks",
+      "The returns quoted must have been mislabelled",
     ],
-    answer: 1,
+    answer: 2,
     explain:
-      "₹100 up 40% is ₹140; down 30% is ₹98. Each pair loses 2% despite a positive simple average. Volatility drags compounded outcomes below the arithmetic mean.",
+      "₹100 up 40% is ₹140; down 30% is ₹98. Each pair loses 2% despite a positive simple average — volatility drags compounded outcomes below it.",
   },
   "diversification-plain-terms": {
     id: "l1-5-q2",
     question:
-      "In a severe market-wide fall, a well-diversified portfolio drops almost as much as a concentrated one. Does this mean diversification failed?",
+      "In a severe market-wide fall, a diversified portfolio drops almost as far as a concentrated one. Did diversification fail?",
     options: [
-      "Yes — it should protect against all losses",
-      "No — it targets company-specific disasters, and a market-wide fall is a different risk it never claimed to remove",
-      "Yes, unless the portfolio held fifty companies",
+      "Yes — it is supposed to prevent all losses",
+      "No — market-wide risk was never its job",
+      "Yes, unless the portfolio held fifty names",
       "No, because diversified portfolios never fall",
     ],
     answer: 1,
     explain:
-      "Diversification removes the risk unique to each company. Market-wide risk affects nearly everything at once and cannot be diversified away by holding more shares.",
+      "Spreading removes risk unique to each company. A market-wide fall moves nearly everything together, and no number of extra holdings escapes it.",
   },
 
   /* ---------------- Level 2 ---------------- */
   "revenue-is-not-profit": {
     id: "l2-1-q2",
     question:
-      "Two retailers each report ₹4,000 cr of revenue. One earns ₹40 cr, the other ₹400 cr. Before concluding the second is better run, what should you check first?",
+      "Two retailers both report ₹4,000 cr of revenue; one earns ₹40 cr and the other ₹400 cr. What should you check first?",
     options: [
-      "Whether they operate the same kind of business at all",
-      "Which has more stores",
-      "Which has the higher share price",
-      "Which was founded first",
+      "Whether they are the same kind of business",
+      "Which of the two runs the larger store estate",
+      "Which one currently has the higher share price",
+      "Which of the two companies was founded earlier",
     ],
     answer: 0,
     explain:
-      "A tenfold margin gap usually signals different business models — one may be a low-margin grocer and the other a high-margin specialist. Compare like with like before judging management.",
+      "A tenfold margin gap usually means different business models — a low-margin grocer against a high-margin specialist. Compare like with like before judging management.",
   },
   "reading-an-income-statement": {
     id: "l2-2-q2",
     question:
-      "A company's revenue rose 10%, gross profit rose 10%, but operating profit fell 15%. Where is the problem?",
+      "Revenue rose 10% and gross profit rose 10%, but operating profit fell 15%. Where is the problem?",
     options: [
-      "In the cost of the products themselves",
-      "In overheads — salaries, marketing or administration grew faster than sales",
-      "In interest payments",
-      "In the tax rate",
+      "In the direct cost of making the product",
+      "In overheads, growing faster than sales",
+      "In the interest charged on borrowings",
+      "In the rate of tax that the company paid",
     ],
     answer: 1,
     explain:
-      "Gross profit keeping pace with revenue means product economics are intact. The damage occurs between gross and operating profit, which is where overheads sit.",
+      "Gross profit keeping pace means product economics are intact. The leak sits between gross and operating profit, which is where overheads live.",
   },
   "what-the-balance-sheet-shows": {
     id: "l2-3-q2",
     question:
-      "Company A has ₹500 cr of debt due in eleven months and ₹80 cr of cash. Company B has ₹2,000 cr of debt due over twelve years and ₹300 cr of cash. Which faces the more urgent problem?",
+      "Company A owes ₹500 cr within eleven months and holds ₹80 cr cash. Company B owes ₹2,000 cr over twelve years and holds ₹300 cr. Who is in more trouble?",
     options: [
-      "Company B, because it owes four times as much",
-      "Company A, because a large obligation falls due imminently and cash on hand cannot cover it",
-      "Neither — both are equally safe",
-      "Company B, because it has more debt per rupee of cash",
+      "B, because the total owed is four times larger",
+      "A, since a big bill lands before the cash does",
+      "Neither — both sit comfortably within limits",
+      "B, because its debt per rupee of cash is higher",
     ],
     answer: 1,
     explain:
-      "Timing decides survival. A company fails when a payment falls due before the money arrives, regardless of how modest the total looks.",
+      "Timing decides survival. Companies fail when a payment falls due before the money arrives, however modest the total looks.",
   },
   "cash-flow-versus-profit": {
     id: "l2-4-q2",
     question:
-      "A company's profit has grown every year for four years, while operating cash flow has been flat. Which explanation would be least concerning?",
+      "Profit has grown for four years while operating cash flow stayed flat. Which explanation is LEAST worrying?",
     options: [
-      "Customers are taking far longer to pay each year",
-      "The company is recognising sales that may never be collected",
-      "It is deliberately building stock ahead of a planned expansion, funded from cash reserves",
-      "Reported profit relies increasingly on accounting estimates",
+      "Customers take longer to pay with each passing year",
+      "Sales are booked that may never be collected",
+      "Stock was built ahead of a planned opening",
+      "Reported profit leans more and more on estimates",
     ],
     answer: 2,
     explain:
-      "A deliberate, funded, temporary stock build has an end date and a stated purpose. The other three describe profit that is drifting away from collectable cash.",
+      "A deliberate, funded, temporary stock build has a purpose and an end date. The other three describe profit drifting away from collectable cash.",
   },
 
   /* ---------------- Level 3 ---------------- */
   "earnings-per-share": {
     id: "l3-1-q2",
     question:
-      "A company earns ₹480 cr with 60 cr shares. It buys back 10 cr shares and profit falls to ₹450 cr. What happened to EPS?",
-    options: [
-      "It fell from ₹8.00 to ₹7.50",
-      "It rose from ₹8.00 to ₹9.00",
-      "It stayed at ₹8.00",
-      "It rose from ₹8.00 to ₹8.50",
-    ],
+      "A company earning ₹480 cr on 60 cr shares buys back 10 cr shares, and profit then falls to ₹450 cr. What happened to EPS?",
+    options: ["Fell to ₹7.50", "Rose to ₹9.00", "Held at ₹8.00", "Rose to ₹8.50"],
     answer: 1,
     explain:
-      "Before: 480 ÷ 60 = ₹8.00. After: 450 ÷ 50 = ₹9.00. EPS rose 12.5% while profit actually fell — exactly why the share count must be checked.",
+      "Before: 480 ÷ 60 = ₹8.00. After: 450 ÷ 50 = ₹9.00. EPS rose 12.5% while profit actually fell — which is why the share count must be checked.",
   },
   "price-to-earnings": {
     id: "l3-2-q2",
     question:
-      "Two companies both trade at a P/E of 30. One grows earnings 25% a year, the other 4%. What does this tell you?",
+      "Two companies both trade on a P/E of 30. One grows earnings 25% a year, the other 4%. What follows?",
     options: [
       "They are equally valued, so equally attractive",
-      "The slower grower is priced far more demandingly for what it delivers",
-      "The faster grower is overpriced",
-      "P/E cannot be compared between companies",
+      "The slower grower is priced more demandingly",
+      "The faster grower must be the overpriced one",
+      "P/E cannot be compared between two companies",
     ],
     answer: 1,
     explain:
-      "The same multiple buys very different growth. Paying 30 times earnings for 4% growth requires that growth to last much longer to justify the price.",
+      "The same multiple buys very different growth. Thirty times earnings for 4% growth needs that growth to persist far longer to justify the price.",
   },
   "return-on-equity": {
     id: "l3-3-q2",
     question:
-      "A company's ROE rose from 15% to 25% over three years while net profit was unchanged. Which explanation is most consistent with those facts?",
+      "ROE climbed from 15% to 25% over three years while net profit did not move. What fits those facts?",
     options: [
-      "It became far more efficient at serving customers",
-      "Equity shrank — through buybacks, losses written off, or replacing equity with debt",
-      "Revenue grew strongly",
-      "The share price rose",
+      "The company got much better at serving customers",
+      "Equity shrank, through buybacks or added debt",
+      "Revenue grew strongly across the three years",
+      "The share price rose over the same period",
     ],
     answer: 1,
     explain:
-      "With profit fixed, ROE can only rise if equity falls. That is a change to the balance sheet, not an improvement in the operating business.",
+      "With profit fixed, ROE can only rise if equity falls. That is a balance-sheet change, not an improvement in the operating business.",
   },
   "debt-to-equity": {
     id: "l3-4-q2",
     question:
-      "A utility with regulated, predictable revenue runs debt-to-equity of 1.8. A fashion retailer with seasonal, unpredictable sales runs 0.9. Which is more likely to be over-borrowed?",
+      "A regulated utility runs debt-to-equity of 1.8; a fashion retailer runs 0.9. Which is likelier to be over-borrowed?",
     options: [
-      "The utility, because its ratio is twice as high",
-      "The retailer, because unpredictable cash flow makes even moderate fixed obligations dangerous",
-      "Neither — both are within normal limits",
-      "The utility, because utilities should carry no debt",
+      "The utility, since its ratio is twice as high",
+      "The retailer — unpredictable sales, fixed bills",
+      "Neither, as both sit inside normal ranges",
+      "The utility, since utilities should hold none",
     ],
     answer: 1,
     explain:
-      "Safe leverage depends on the stability of the cash flow servicing it. Predictable regulated income supports far more debt than seasonal, taste-driven sales.",
+      "Safe leverage depends on how stable the cash flow servicing it is. Regulated income supports far more debt than seasonal, taste-driven sales.",
   },
   "margins-where-profit-comes-from": {
     id: "l3-5-q2",
     question:
-      "A company holds a 30% gross margin while every competitor sits near 18%, and it has done so for six years. Which conclusion is best supported?",
+      "A company has held a 30% gross margin for six years while rivals sit near 18%. What is best supported?",
     options: [
-      "Its accounts are probably misstated",
-      "It has some advantage rivals cannot easily copy — brand, scale or switching costs",
-      "It is charging too much and will lose all its customers",
-      "It spends less on product quality than rivals",
+      "Its accounts are probably being misstated",
+      "Something stops rivals from copying it",
+      "It overcharges and will lose its customers",
+      "It must be skimping on product quality",
     ],
     answer: 1,
     explain:
-      "In a competitive market, excess margin attracts competition. A gap that survives six years is evidence of a barrier competitors have been unable to cross.",
+      "Excess margin attracts competition. A gap that survives six years is evidence of a barrier rivals have not been able to cross.",
   },
   "putting-ratios-together": {
     id: "l3-6-q2",
     question:
-      "A company shows: revenue −6%, EPS +14%, ROE +5 points, debt-to-equity from 0.4 to 1.3, free cash flow −22%. What is the most complete reading?",
+      "Revenue −6%, EPS +14%, ROE +5 points, debt-to-equity 0.4 → 1.3, free cash flow −22%. What is the honest reading?",
     options: [
-      "A strong year — earnings and returns both improved",
-      "Shrinking sales and weakening cash, with per-share figures propped up by borrowing and a smaller share count",
-      "The numbers contradict each other and must be wrong",
-      "Only the EPS growth matters to shareholders",
+      "A strong year: earnings and returns both improved",
+      "Borrowing flatters per-share figures as sales shrink",
+      "The figures contradict each other and must be wrong",
+      "Only the EPS growth matters to a shareholder here",
     ],
     answer: 1,
     explain:
-      "Every improved figure has a financial cause and every operating figure worsened. Read together, the ratios describe leverage disguising decline.",
+      "Every improved figure has a financial cause and every operating figure worsened. Together they describe leverage disguising decline.",
   },
 
   /* ---------------- Level 4 ---------------- */
   "comparing-two-companies": {
     id: "l4-1-q2",
     question:
-      "You compare a software firm and a grocer on net margin, ROE and free cash flow conversion. The software firm wins all three. What have you most likely measured?",
+      "You rank a software firm against a grocer on net margin, ROE and cash conversion. Software wins all three. What did you measure?",
     options: [
-      "That the software firm is better managed",
-      "Mostly the difference between two business models, not the quality of either company",
-      "That the grocer should be avoided",
-      "That the software firm's shares will perform better",
+      "That the software firm is the better managed one",
+      "Mostly the gap between two business models",
+      "That the grocer is a company best avoided",
+      "That software shares will outperform from here",
     ],
     answer: 1,
     explain:
-      "All three metrics structurally favour asset-light subscription businesses. The comparison graded the industry, not the companies within it.",
+      "All three metrics structurally favour asset-light subscription businesses. The comparison graded the industry, not the companies in it.",
   },
   "evidence-checklist": {
     id: "l4-2-q2",
     question:
-      "Your checklist records: 'Management seems capable and the industry looks promising.' What is the problem with that entry?",
+      "Your checklist reads: 'Management seems capable and the industry looks promising.' What is wrong with that entry?",
     options: [
-      "It is too short",
-      "Neither claim is sourced or checkable, so it is an impression recorded as if it were evidence",
-      "Management quality is irrelevant",
-      "Industries cannot be assessed",
+      "It is far too short to be of any real use",
+      "Neither claim is sourced or checkable",
+      "Management quality is irrelevant to investing",
+      "Industry conditions cannot be assessed at all",
     ],
     answer: 1,
     explain:
-      "The purpose of the checklist is separating verified facts from assumptions. An unsourced impression written in the evidence column defeats that entirely.",
+      "The checklist exists to separate verified fact from assumption. An unsourced impression written into the evidence column defeats the exercise.",
   },
   "writing-your-investment-case": {
     id: "l4-3-q2",
     question:
-      "Two years on, a holding is up 30% but margins fell below the level you named as your reversal condition. What does a disciplined review conclude?",
+      "Two years on, a holding is up 30% but margins fell below the level you named as your reversal condition. What does a disciplined review say?",
     options: [
-      "The gain proves the case was right",
-      "The stated condition was breached, so the case has failed regardless of the price — the gain came from something you did not predict",
+      "The gain shows the original case was right",
+      "The case failed on its own stated terms",
       "The reversal condition should be revised upward",
-      "Nothing, since you are profitable",
+      "Nothing needs saying while you are in profit",
     ],
     answer: 1,
     explain:
-      "The case was falsified on its own terms. A profit arriving for unforeseen reasons is luck, and treating it as vindication teaches you to ignore your own conditions.",
+      "The case was falsified on the condition you set. A profit arriving for unforeseen reasons is luck, and calling it vindication teaches you to ignore your own rules.",
   },
 
   /* ---------------- Level 5 ---------------- */
   "position-sizing": {
     id: "l5-1-q2",
     question:
-      "You hold twelve positions. Your three largest are 22%, 19% and 17% — together 58%. All three are in the same sector. Which statement is most accurate?",
+      "You hold twelve positions. The largest three are 22%, 19% and 17% — and all three sit in one sector. Which is most accurate?",
     options: [
-      "The portfolio is diversified because it holds twelve companies",
-      "Position sizing and sector exposure have combined so that most of the outcome depends on one industry",
-      "It is fine as long as no single position exceeds 25%",
-      "The remaining nine positions provide adequate protection",
+      "The portfolio is diversified: it holds twelve names",
+      "Most of the outcome rides on a single industry",
+      "It is fine while no single position passes 25%",
+      "The other nine positions provide enough cover",
     ],
     answer: 1,
     explain:
-      "Neither the count nor any single cap captures the real exposure. Concentration is the joint effect of size and shared dependency.",
+      "Neither the count nor a per-position cap captures the real exposure. Concentration is the joint effect of size and shared dependency.",
   },
   "spreading-risk-across-sectors": {
     id: "l5-2-q2",
-    question:
-      "Which portfolio carries the least genuine diversification, despite appearances?",
+    question: "Which portfolio is least diversified, despite how it looks?",
     options: [
-      "Four companies: a bank, a software firm, a grocer and a miner",
-      "Fifteen companies, all of which sell discretionary goods to households",
-      "Six companies across five different sectors",
-      "Eight companies with different customers and different cost structures",
+      "Four names: a bank, a software firm, a grocer, a miner",
+      "Fifteen names, all selling discretionary goods",
+      "Six companies spread across five different sectors",
+      "Eight firms with different customers and cost bases",
     ],
     answer: 1,
     explain:
-      "Fifteen names sharing one dependency behave as a single bet. A smaller number of genuinely different businesses spreads risk far more effectively.",
+      "Fifteen names sharing one dependency behave as a single bet. Fewer, genuinely different businesses spread risk far more effectively.",
   },
   "rebalancing-without-overtrading": {
     id: "l5-3-q2",
     question:
-      "An investor rebalances monthly, paying costs each time, and argues it keeps risk tightly controlled. What is the strongest objection?",
+      "An investor rebalances monthly, paying costs each time, arguing it keeps risk tightly controlled. The strongest objection is:",
     options: [
-      "Rebalancing never controls risk",
-      "The extra risk control over an annual or threshold-based rule is small, while the accumulated costs and taxes are not",
-      "Monthly rebalancing is not permitted",
-      "Risk should never be controlled",
+      "Rebalancing does not control risk in any way",
+      "The gain over an annual rule is small; costs are not",
+      "Monthly rebalancing is not actually permitted",
+      "Risk is not something worth controlling at all",
     ],
     answer: 1,
     explain:
-      "The benefit curve flattens quickly while costs accumulate linearly. Frequent rebalancing spends real money for a marginal improvement in drift.",
+      "The benefit curve flattens quickly while costs accumulate steadily. Frequent rebalancing spends real money for a marginal reduction in drift.",
   },
 
   /* ---------------- Level 6 ---------------- */
   "what-a-drawdown-feels-like": {
     id: "l6-1-q2",
     question:
-      "Portfolio A falls 40% then gains 40%. Portfolio B falls 15% then gains 15%. Both are back to their starting percentage moves. Where do they actually stand?",
+      "Portfolio A falls 40% then gains 40%. Portfolio B falls 15% then gains 15%. Where do they end up?",
     options: [
-      "Both are exactly back to where they started",
-      "A is down about 16%; B is down about 2% — deeper falls need disproportionately larger recoveries",
-      "A is ahead because its swings were larger",
-      "Both are ahead, because gains followed losses",
+      "Both are exactly back where they started",
+      "A is down about 16%, B down about 2%",
+      "A is ahead, since its swings were larger",
+      "Both finish ahead, as gains followed losses",
     ],
     answer: 1,
     explain:
-      "₹100 → ₹60 → ₹84 (−16%). ₹100 → ₹85 → ₹97.75 (−2.25%). Equal percentage moves in both directions never return you to the start, and the gap widens with depth.",
+      "₹100 → ₹60 → ₹84 is −16%. ₹100 → ₹85 → ₹97.75 is −2.25%. Equal percentage moves never return you to the start, and the gap widens with depth.",
   },
   "reacting-to-a-surprise": {
     id: "l6-2-q2",
     question:
-      "Which announcement should most change a long-term valuation, even though its immediate price reaction may be the smallest?",
+      "Which announcement should most change a long-term valuation, even if the price barely reacts on the day?",
     options: [
-      "A one-off legal settlement costing a year's profit",
-      "A quarterly result missing expectations by 3%",
-      "A structural shift making the company's main product gradually unnecessary",
-      "A temporary factory shutdown covered by insurance",
+      "A one-off settlement costing a year of profit",
+      "A quarterly result missing forecasts by 3%",
+      "A shift making the main product unnecessary",
+      "A temporary shutdown that insurance covers",
     ],
     answer: 2,
     explain:
-      "The first, second and fourth affect one or two periods. Only the third reduces the cash the business can generate indefinitely, which is what long-term value rests on.",
+      "The others affect one or two periods. Only obsolescence reduces the cash the business can generate indefinitely, which is what long-term value rests on.",
   },
   "volatility-versus-permanent-loss": {
     id: "l6-3-q2",
-    question:
-      "Which of these represents a genuinely permanent loss rather than volatility?",
+    question: "Which of these is a permanent loss rather than volatility?",
     options: [
-      "A holding down 35% whose business is performing as expected",
-      "A company whose main product has been made obsolete and whose earning power will not return",
-      "A portfolio down 20% during a broad market decline",
-      "A holding that has traded sideways for two years",
+      "A holding down 35% that performs as expected",
+      "A firm whose earning power will not return",
+      "A portfolio down 20% in a broad decline",
+      "A holding that has been sideways for two years",
     ],
     answer: 1,
     explain:
-      "Only the second describes destroyed earning power. The others describe price movement, which reverses if the underlying businesses continue to perform.",
+      "Only destroyed earning power is permanent. The others describe price movement, which reverses if the underlying businesses keep performing.",
   },
 
   /* ---------------- Level 7 ---------------- */
   "defending-a-decision": {
     id: "l7-1-q2",
-    question:
-      "Which of these is the strongest evidence that you genuinely understand a position you hold?",
+    question: "What best shows that you genuinely understand a position you hold?",
     options: [
       "You can list many reasons the company will succeed",
-      "You can state the opposing case so well that someone holding it would agree you represented them fairly",
-      "You have held it for several years",
-      "Respected investors hold the same position",
+      "You can state the case against it fairly",
+      "You have held the position for several years",
+      "Investors you respect hold the same position",
     ],
     answer: 1,
     explain:
-      "Accumulating supporting reasons is easy and mostly measures effort spent confirming yourself. Representing the opposing case fairly requires having actually engaged with it.",
+      "Collecting supporting reasons mostly measures effort spent confirming yourself. Representing the opposing case fairly requires actually engaging with it.",
   },
   "reviewing-your-mistakes": {
     id: "l7-2-q2",
     question:
-      "Across twenty reviewed decisions you find: careful research, good outcomes on 12, poor on 8, and in six of the eight the loss followed a risk you had explicitly written down and accepted. What does this suggest?",
+      "Across twenty reviewed decisions: 12 good outcomes, 8 poor — and in six of the eight, the loss came from a risk you wrote down and accepted. What does that show?",
     options: [
-      "Your research process is failing and needs replacing",
-      "The process is largely working — you identified the risks correctly; the question is whether you were paid enough to accept them",
-      "You should stop writing down risks",
-      "Eight losses out of twenty is unacceptable",
+      "The research process is failing and needs replacing",
+      "The analysis worked; sizing is the open question",
+      "Writing risks down is not worth continuing with",
+      "Eight losses out of twenty is simply unacceptable",
     ],
     answer: 1,
     explain:
-      "Losses arising from risks you named in advance are evidence the analysis worked. The improvable question is position sizing and whether the expected return justified those risks.",
+      "Losses from risks you named in advance are evidence the analysis worked. What is improvable is position sizing and whether the return justified those risks.",
   },
   "improving-your-process": {
     id: "l7-3-q2",
     question:
-      "After a poor year an investor changes six rules at once and the next year is better. What can they conclude?",
+      "After a poor year an investor changes six rules at once, and the next year is better. What can they conclude?",
     options: [
-      "All six changes were improvements",
-      "Very little — with six simultaneous changes and one noisy year, no individual change can be credited",
-      "The process is now optimal",
-      "The previous rules were all wrong",
+      "That all six of the changes were improvements",
+      "Little — six changes, one noisy year, no signal",
+      "That the process has now reached its optimum",
+      "That every one of the previous rules was wrong",
     ],
     answer: 1,
     explain:
-      "One year is a small sample and six simultaneous changes are confounded. Changing one thing at a time is what makes the effect of any change readable.",
+      "One year is a small sample and six simultaneous changes are confounded. Changing one thing at a time is what makes any effect readable.",
   },
 };

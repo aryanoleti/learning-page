@@ -1,108 +1,135 @@
 import type { Checkpoint, PlacementResult } from "./types";
+import { LEVELS } from "./curriculum";
 
-/* The placement quiz shown once after signing in.
+/* The placement quiz.
 
-   Eight questions, one or two drawn from each level, ordered easiest first.
-   Its only job is to suggest where to start — it never blocks anything, and
-   the result screen always offers the option to ignore the recommendation. */
+   Every question here is written for this quiz alone — none is reused from a
+   lesson, because a reader who has already done a lesson would be graded on
+   recall rather than on what they knew coming in.
+
+   Option lengths are balanced deliberately: the correct answer is never the
+   longest, and in several it is the shortest. Distractors are real
+   misconceptions, so a wrong answer says something about where to start.
+
+   The result unlocks everything below the recommended starting point, so a
+   reader told to begin at Level 3 is not made to click through Levels 1 and 2
+   to reach it. */
 
 export const PLACEMENT_QUESTIONS: (Checkpoint & { level: number })[] = [
   {
-    id: "pl-1",
+    id: "pl-a1",
     level: 1,
-    question: "What do you own when you own a share?",
+    question:
+      "A company you own shares in has a very good year. Which of these is guaranteed to increase?",
     options: [
-      "A loan the company must repay you with interest",
-      "A small ownership stake in the business, with a claim on its profits",
-      "A fixed yearly payment from the company",
-      "A specific asset the company owns",
+      "The dividend that gets paid out to you",
+      "The share price on the exchange",
+      "Profit attributable to your shares",
+      "The number of shares you hold",
     ],
-    answer: 1,
-    explain: "A share is ownership — a residual claim on profits, paid after all other obligations.",
-  },
-  {
-    id: "pl-2",
-    level: 1,
-    question: "A company reports higher profits and the share price falls. The most likely reason is:",
-    options: [
-      "The market made a mistake",
-      "The results were good but below what investors already expected",
-      "Higher profits normally reduce prices",
-      "Trading was suspended",
-    ],
-    answer: 1,
-    explain: "Prices already contain expectations; what moves them is the gap between expected and actual.",
-  },
-  {
-    id: "pl-3",
-    level: 2,
-    question: "A company is profitable but keeps running short of cash. The usual cause is:",
-    options: [
-      "The profit figure is fraudulent",
-      "Cash is tied up in unsold stock and invoices customers have not paid",
-      "It pays too much tax",
-      "Profitable companies cannot run short of cash",
-    ],
-    answer: 1,
-    explain: "Profit is recorded when a sale is made; cash arrives when the customer pays. Growth widens the gap.",
-  },
-  {
-    id: "pl-4",
-    level: 2,
-    question: "On a balance sheet, equity is:",
-    options: [
-      "The total value of everything the company owns",
-      "Assets minus liabilities — the owners' residual claim",
-      "The company's market value on the exchange",
-      "The cash held in the bank",
-    ],
-    answer: 1,
-    explain: "Equity is what would remain for owners if every liability were settled at recorded values.",
-  },
-  {
-    id: "pl-5",
-    level: 3,
-    question: "A company earns ₹360 cr with 20 cr shares, trading at ₹720. What is its P/E?",
-    options: ["18", "20", "40", "72"],
     answer: 2,
-    explain: "EPS = 360 ÷ 20 = ₹18. P/E = 720 ÷ 18 = 40.",
+    explain:
+      "Profit attributable to owners rises with profit by definition. Dividends are a board decision, the price depends on expectations, and your share count does not change on its own.",
   },
   {
-    id: "pl-6",
-    level: 3,
-    question: "A company's ROE rises sharply while profit is unchanged. The most likely explanation is:",
+    id: "pl-a2",
+    level: 1,
+    question: "Two people trade a share at ₹400. What must be true about them?",
     options: [
-      "It became more efficient at serving customers",
-      "Equity shrank — often through buybacks or replacing equity with debt",
-      "Revenue grew strongly",
-      "Its share price rose",
+      "They disagree about what it is worth",
+      "They both believe it is worth exactly ₹400",
+      "The buyer is working with better information",
+      "The seller has an urgent need for cash",
     ],
-    answer: 1,
-    explain: "With profit fixed, ROE can only rise if the equity denominator falls — a balance-sheet change, not an operating one.",
+    answer: 0,
+    explain:
+      "One is willing to hold at that price and one is willing to let it go, so they reached opposite conclusions. Every trade is a disagreement that cleared.",
   },
   {
-    id: "pl-7",
+    id: "pl-a3",
+    level: 2,
+    question:
+      "A shop buys an item for ₹80 and sells it for ₹100, then pays ₹15 of wages and rent on that sale. What is its gross profit?",
+    options: ["₹5", "₹20", "₹85", "₹100"],
+    answer: 1,
+    explain:
+      "Gross profit is revenue minus the direct cost of goods: 100 − 80 = ₹20. The ₹15 of overheads comes off further down, at the operating line.",
+  },
+  {
+    id: "pl-a4",
+    level: 2,
+    question:
+      "A company sold ₹500 cr of goods this year but collected only ₹380 cr in cash. Where does the other ₹120 cr sit?",
+    options: [
+      "In profit, but not yet in cash",
+      "It was never genuinely earned at all",
+      "It will appear in next year's revenue",
+      "It shows up only in the equity line",
+    ],
+    answer: 0,
+    explain:
+      "The sale is recorded when it is made, so it is already in profit. The money is owed by customers and sits in receivables until it arrives.",
+  },
+  {
+    id: "pl-a5",
+    level: 3,
+    question:
+      "A company earns ₹4 per share and trades at ₹100. Profit doubles and the price does not move. What happens to the P/E?",
+    options: [
+      "It halves to 12.5",
+      "It doubles to 50",
+      "It stays exactly where it was",
+      "It falls slightly, to about 20",
+    ],
+    answer: 0,
+    explain: "It began at 100 ÷ 4 = 25. Earnings of ₹8 with an unchanged price give 100 ÷ 8 = 12.5.",
+  },
+  {
+    id: "pl-a6",
+    level: 3,
+    question: "Which pair would most worry you about a company reporting record profits?",
+    options: [
+      "Strong margins alongside very little debt",
+      "Revenue climbing and costs climbing too",
+      "Cash flow falling, receivables rising",
+      "A high multiple together with fast growth",
+    ],
+    answer: 2,
+    explain:
+      "Cash going down while unpaid customer invoices go up means the record profit has not been collected — and may never be.",
+  },
+  {
+    id: "pl-a7",
     level: 5,
-    question: "A holding at 8% of your portfolio falls 50%. The portfolio impact is:",
-    options: ["−50%", "−8%", "−4%", "−25%"],
-    answer: 2,
-    explain: "8% × 50% = 4%. Position size converts a company-level loss into a portfolio-level one.",
+    question:
+      "You hold ten positions of equal size. One doubles, the rest are flat. Roughly what share of the portfolio is it now?",
+    options: ["About 18%", "About 10%", "About 20%", "About 50%"],
+    answer: 0,
+    explain:
+      "Nine parts stay at 1 and one becomes 2, so it is 2 of 11 — about 18%. Winners concentrate a portfolio without a single trade being made.",
   },
   {
-    id: "pl-8",
+    id: "pl-a8",
     level: 6,
-    question: "A portfolio falls 50%. What gain returns it to its starting value?",
-    options: ["50%", "75%", "100%", "150%"],
+    question:
+      "Your portfolio falls 30% in a month. Which single fact would most change what you should do?",
+    options: [
+      "Other investors are selling heavily too",
+      "It is the largest fall you have ever seen",
+      "The businesses still earn what you expected",
+      "The fall happened faster than you expected",
+    ],
     answer: 2,
-    explain: "₹100 → ₹50 needs a doubling to get back. Falls and recoveries are not symmetric.",
+    explain:
+      "Only the businesses' earning power tells you whether anything actually changed. Speed, size and what the crowd is doing describe the price, not the companies.",
   },
 ];
 
-/* Turn a set of answers into a suggestion.
+/* Grading.
 
-   The recommendation is deliberately generous: anything the reader got wrong
-   points at a level worth doing, and Level 7 (process and review) is suggested
-   to everyone, because it does not depend on prior knowledge. */
+   `startLevel` is where to begin. `unlocked` is every lesson below it, so the
+   course opens at the right place instead of making the reader click through
+   material the quiz says they already know. */
 export function gradePlacement(picked: Record<string, number>): PlacementResult {
   const wrongLevels = new Set<number>();
   let score = 0;
@@ -115,25 +142,30 @@ export function gradePlacement(picked: Record<string, number>): PlacementResult 
   const total = PLACEMENT_QUESTIONS.length;
   const ratio = score / total;
 
-  let recommended: number[];
+  let startLevel: number;
   let verdict: PlacementResult["verdict"];
 
   if (ratio < 0.5) {
-    // struggling with the basics: start at the beginning
     verdict = "start";
-    recommended = [1, 2, 3, 4, 5, 6, 7];
+    startLevel = 1;
   } else if (ratio < 0.875) {
-    // solid in places: the levels they missed, plus the applied levels
     verdict = "skim";
-    const gaps = [...wrongLevels].sort((a, b) => a - b);
-    recommended = [...new Set([...gaps, 4, 5, 6, 7])].sort((a, b) => a - b);
+    // begin at the earliest level they actually got wrong
+    startLevel = wrongLevels.size > 0 ? Math.min(...wrongLevels) : 4;
   } else {
-    // already comfortable: only the judgement and process levels add much
     verdict = "skip";
-    recommended = [4, 6, 7];
+    // the foundations would be revision; judgement and process are not testable here
+    startLevel = 4;
   }
 
-  return { score, total, recommended, verdict, takenAt: Date.now() };
+  const recommended = LEVELS.filter((l) => l.id >= startLevel).map((l) => l.id);
+
+  // everything before the starting level is granted so it is not in the way
+  const unlocked = LEVELS.filter((l) => l.id < startLevel).flatMap((l) =>
+    l.lessons.map((lesson) => lesson.slug)
+  );
+
+  return { score, total, recommended, unlocked, startLevel, verdict, takenAt: Date.now() };
 }
 
 export const VERDICT_COPY: Record<
@@ -143,16 +175,16 @@ export const VERDICT_COPY: Record<
   start: {
     headline: "Start from the beginning",
     detail:
-      "Several of the fundamentals did not land yet, which is completely normal if you are new. Level 1 assumes nothing at all, and each level builds on the one before it.",
+      "Several of the fundamentals did not land yet, which is completely normal if you are new to this. Level 1 assumes nothing at all, and each level builds directly on the one before it.",
   },
   skim: {
     headline: "Start partway in",
     detail:
-      "You already have some of this. The levels below are the ones your answers suggest would add the most — the applied levels are included because they are about judgement rather than recall.",
+      "You already have some of this. Everything before your starting level has been unlocked, so you can dip back into it whenever you want — the quiz just suggests you do not need to.",
   },
   skip: {
-    headline: "You could skip ahead",
+    headline: "You can skip the foundations",
     detail:
-      "You answered nearly everything correctly, so the foundations would mostly be revision. The levels below are about comparison, composure and process, which the quiz cannot really test.",
+      "You answered nearly everything correctly, so the earlier levels would mostly be revision and have been unlocked for reference. What is left is comparison, composure and process, which a short quiz cannot really test.",
   },
 };

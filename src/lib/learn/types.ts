@@ -84,8 +84,12 @@ export type StoredAnswer = {
 export type PlacementResult = {
   score: number;
   total: number;
-  /** levels the result suggests starting from, in order */
+  /** levels the result suggests taking, in order */
   recommended: number[];
+  /** lesson slugs granted because the reader tested out of them */
+  unlocked: string[];
+  /** the level the reader should begin at */
+  startLevel: number;
   /** "start", "skim" or "skip" — the headline suggestion */
   verdict: "start" | "skim" | "skip";
   takenAt: number;
@@ -94,13 +98,18 @@ export type PlacementResult = {
 /** Per-lesson gate state: how many attempts at the unit check, and whether
     it was passed. Two attempts are allowed before the lesson restarts. */
 export type GateState = {
+  /** submitted attempts at the unit check */
   attempts: number;
   passed: boolean;
+  /** times the reader left the exam to go back and read — each counts as a try */
+  walkAways: number;
+  /** total tries consumed: submissions plus walk-aways, kept for later analysis */
+  triesUsed: number;
 };
 
 export type Progress = {
   /** bumped when the shape changes so old saves can be discarded safely */
-  version: 2;
+  version: 3;
   /** lesson slugs whose unit check has been passed */
   completed: string[];
   /** gate state per lesson slug */
@@ -113,18 +122,44 @@ export type Progress = {
   answers: Record<string, StoredAnswer>;
   /** last lesson opened, used by "Continue" */
   currentLesson: string | null;
+  /** completed end-of-course exams, newest last */
+  exams: ExamResult[];
   updatedAt: number;
 };
 
 export const EMPTY_PROGRESS: Progress = {
-  version: 2,
+  version: 3,
   completed: [],
   gates: {},
   placement: null,
   placementSeen: false,
   answers: {},
   currentLesson: null,
+  exams: [],
   updatedAt: 0,
+};
+
+/* The end-of-course exam: a record of how the reader did, plus whatever
+   feedback they chose to leave. Stored in this browser; exported by hand. */
+export type ExamAnswer = { id: string; picked: number; correct: boolean; level: number };
+
+export type ExamResult = {
+  takenAt: number;
+  score: number;
+  total: number;
+  /** score on the placement quiz, when one was taken — the improvement figure */
+  placementScore: number | null;
+  placementTotal: number | null;
+  perLevel: Record<number, { correct: number; total: number }>;
+  answers: ExamAnswer[];
+  /** total unit-check tries across the course, including walk-aways */
+  totalTries: number;
+  lessonsPassed: number;
+  feedback: {
+    rating: number | null;
+    hardest: string;
+    comments: string;
+  } | null;
 };
 
 /* Hooks for features this course will connect to later. Kept as data so the

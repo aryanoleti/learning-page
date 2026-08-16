@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { LEVELS, TOTAL_LESSONS, TOTAL_MINUTES, TOTAL_QUESTIONS, FEATURE_HOOKS, getLesson } from "@/lib/learn/curriculum";
 import { ROUTES } from "@/lib/learn/links";
+import { lessonReadingTime, levelReadingTime, totalReadingTime } from "@/lib/learn/reading";
+import { ALL_LESSONS } from "@/lib/learn/curriculum";
 import { GLOSSARY } from "@/lib/learn/glossary";
 import { useProgress, levelProgress, lessonStatus } from "@/lib/learn/progress";
 import { isLessonUnlocked, furthestUnlocked } from "@/lib/learn/curriculum";
@@ -135,7 +137,7 @@ export function LearnHome() {
                     <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-(--color-fg-subtle)">
                       <span>{level.lessons.length} lessons</span>
                       <span>
-                        {level.lessons.reduce((s, l) => s + l.minutes, 0)} min
+                        {levelReadingTime(level.lessons)} read
                       </span>
                       <span>
                         {hydrated ? `${lp.completed}/${lp.total} done` : `${lp.total} lessons`}
@@ -176,7 +178,7 @@ export function LearnHome() {
                             {lesson.title}
                           </span>
                           <span className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-(--color-fg-muted)">
-                            <span>{lesson.minutes} min</span>
+                            <span>{lessonReadingTime(lesson)} read</span>
                             <DifficultyTag difficulty={lesson.difficulty} />
                           </span>
                         </span>

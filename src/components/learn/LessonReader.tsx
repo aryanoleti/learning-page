@@ -12,8 +12,8 @@ import {
 } from "@/lib/learn/curriculum";
 import { useProgress } from "@/lib/learn/progress";
 import { ROUTES } from "@/lib/learn/links";
+import { lessonReadingTime, stepReadingTime } from "@/lib/learn/reading";
 import { CheckpointBlock } from "./CheckpointBlock";
-import { UnitCheck } from "./UnitCheck";
 import { LearnTopBar } from "./LearnTopBar";
 import { Breadcrumb, DifficultyTag, ExampleCard, ProgressBar } from "./LearnPieces";
 
@@ -35,7 +35,7 @@ export function LessonReader({ lesson }: { lesson: Lesson }) {
     openLesson(lesson.slug);
   }, [lesson.slug, openLesson]);
 
-  const gate = progress.gates[lesson.slug] ?? { attempts: 0, passed: false };
+  const gate = progress.gates[lesson.slug] ?? { attempts: 0, passed: false, walkAways: 0, triesUsed: 0 };
   const unlocked = !hydrated || isLessonUnlocked(lesson.slug, progress.completed);
   const nextUnlocked = gate.passed;
   const answeredInline = inlineIds.filter((id) => progress.answers[id]).length;
@@ -85,7 +85,7 @@ export function LessonReader({ lesson }: { lesson: Lesson }) {
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-(--color-fg-muted)">
             <span>Lesson {position} of 27</span>
             <span aria-hidden="true">·</span>
-            <span>{lesson.minutes} min</span>
+            <span>{lessonReadingTime(lesson)} read</span>
             <span aria-hidden="true">·</span>
             <DifficultyTag difficulty={lesson.difficulty} />
           </div>
@@ -122,6 +122,9 @@ export function LessonReader({ lesson }: { lesson: Lesson }) {
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 {step.heading}
+                <span className="ml-auto shrink-0 text-xs font-normal text-(--color-fg-muted)">
+                  {stepReadingTime(step)}
+                </span>
               </h2>
               <div className="mt-3 space-y-4">
                 {step.body.map((para) => (
@@ -166,16 +169,37 @@ export function LessonReader({ lesson }: { lesson: Lesson }) {
           </ul>
         </section>
 
-        <UnitCheck
-          questions={questions}
-          attempts={gate.attempts}
-          passed={gate.passed}
-          onSubmit={(correct) => recordGateAttempt(lesson.slug, correct)}
-          onRestart={() => {
-            restartLesson(lesson.slug, lessonQuestionIds(lesson));
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          }}
-        />
+        {/* The unit check lives on its own page, opened in a new tab. Leaving
+            that tab to come back here and re-read costs a try — which is why
+            it is not embedded in the lesson it is testing. */}
+        <section className="mt-10 rounded-2xl border-2 border-(--color-border-strong) bg-(--color-surface) p-5 sm:p-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-semibold text-(--color-fg)">Unit check</h2>
+              <p className="mt-1 max-w-md text-sm leading-relaxed text-(--color-fg-muted)">
+                Two questions, both from what you just read. Opens in a new tab —
+                coming back here to look something up counts as a try.
+              </p>
+            </div>
+            <span className="rounded-full border border-(--color-border) px-3 py-1 text-xs font-medium tabular-nums text-(--color-fg-muted)">
+              {gate.passed ? "Passed" : `Attempt ${Math.min(gate.attempts + 1, 2)} of 2`}
+            </span>
+          </div>
+          {gate.triesUsed > 0 && !gate.passed && (
+            <p className="mt-3 text-xs text-(--color-fg-muted)">
+              Tries used: <span className="tabular-nums">{gate.triesUsed}</span>
+              {gate.walkAways > 0 && ` (${gate.walkAways} from leaving the exam tab)`}
+            </p>
+          )}
+          <a
+            href={`/lesson/${lesson.slug}/exam/`}
+            target="_blank"
+            rel="noopener"
+            className="mt-5 inline-block rounded-lg bg-(--color-brand-500) px-5 py-2.5 text-sm font-semibold text-white hover:bg-(--color-brand-600)"
+          >
+            {gate.passed ? "Review the unit check" : "Open the unit check →"}
+          </a>
+        </section>
 
         {/* Back is always available; forward only after the gate is passed. */}
         <nav aria-label="Lesson navigation" className="mt-8 grid gap-3 sm:grid-cols-2">

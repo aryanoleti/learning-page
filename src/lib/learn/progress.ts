@@ -11,7 +11,7 @@ import { ALL_LESSONS, TOTAL_LESSONS, lessonQuestionIds, getLesson } from "./curr
    component owning its own copy, so a checkpoint answered in the reader
    updates the level cards behind it immediately. */
 
-const KEY = "stocksense.learn.progress.v2";
+const KEY = "stocksense.learn.progress.v3";
 
 let current: Progress = EMPTY_PROGRESS;
 let loaded = false;
@@ -24,13 +24,14 @@ function read(): Progress {
     if (!raw) return EMPTY_PROGRESS;
     const parsed = JSON.parse(raw) as Progress;
     // a saved file from an older shape is discarded rather than migrated
-    if (parsed?.version !== 2) return EMPTY_PROGRESS;
+    if (parsed?.version !== 3) return EMPTY_PROGRESS;
     return {
-      version: 2,
+      version: 3,
       completed: Array.isArray(parsed.completed) ? parsed.completed : [],
       gates: parsed.gates && typeof parsed.gates === "object" ? parsed.gates : {},
       placement: parsed.placement ?? null,
       placementSeen: parsed.placementSeen === true,
+      exams: Array.isArray(parsed.exams) ? parsed.exams : [],
       answers: parsed.answers && typeof parsed.answers === "object" ? parsed.answers : {},
       currentLesson: typeof parsed.currentLesson === "string" ? parsed.currentLesson : null,
       updatedAt: typeof parsed.updatedAt === "number" ? parsed.updatedAt : 0,
@@ -178,19 +179,42 @@ export function useProgress() {
      and unlocks the next one; failing twice leaves the reader to restart. */
   const recordGateAttempt = useCallback((slug: string, passed: boolean) => {
     ensureLoaded();
-    const prev = current.gates[slug] ?? { attempts: 0, passed: false };
+    const prev = current.gates[slug] ?? { attempts: 0, passed: false, walkAways: 0, triesUsed: 0 };
     if (prev.passed) return;
     const gates = {
       ...current.gates,
-      [slug]: { attempts: prev.attempts + 1, passed },
+      [slug]: {
+        ...prev,
+        attempts: prev.attempts + 1,
+        triesUsed: prev.triesUsed + 1,
+        passed,
+      },
     };
     write({
       ...current,
       gates,
-      completed: passed && !current.completed.includes(slug)
-        ? [...current.completed, slug]
-        : current.completed,
+      completed:
+        passed && !current.completed.includes(slug)
+          ? [...current.completed, slug]
+          : current.completed,
       currentLesson: slug,
+      updatedAt: Date.now(),
+    });
+  }, []);
+
+  /* The exam opens in its own view. Going back to re-read the lesson is
+     allowed, but it costs a try — the questions are answerable from the
+     material, so looking it up mid-exam is a different thing from knowing it. */
+  const recordWalkAway = useCallback((slug: string) => {
+    ensureLoaded();
+    const prev = current.gates[slug] ?? { attempts: 0, passed: false, walkAways: 0, triesUsed: 0 };
+    if (prev.passed) return;
+    write({
+      ...current,
+      gates: {
+        ...current.gates,
+        [slug]: { ...prev, walkAways: prev.walkAways + 1, triesUsed: prev.triesUsed + 1 },
+      },
       updatedAt: Date.now(),
     });
   }, []);
@@ -200,8 +224,16 @@ export function useProgress() {
      the lesson is genuinely re-read rather than skimmed. */
   const restartLesson = useCallback((slug: string, questionIds: string[]) => {
     ensureLoaded();
+    const prior = current.gates[slug];
     const gates = { ...current.gates };
-    delete gates[slug];
+    // the attempt counter resets so the reader gets two fresh goes, but the
+    // tries already spent are kept — that history is the point of recording it
+    gates[slug] = {
+      attempts: 0,
+      passed: false,
+      walkAways: prior?.walkAways ?? 0,
+      triesUsed: prior?.triesUsed ?? 0,
+    };
     const answers = { ...current.answers };
     questionIds.forEach((id) => delete answers[id]);
     write({ ...current, gates, answers, currentLesson: slug, updatedAt: Date.now() });
@@ -209,7 +241,28 @@ export function useProgress() {
 
   const savePlacement = useCallback((result: Progress["placement"]) => {
     ensureLoaded();
-    write({ ...current, placement: result, placementSeen: true, updatedAt: Date.now() });
+    // levels the reader tested out of are marked passed, so the course opens
+    // at the recommended level instead of behind a wall of earlier lessons
+    const granted = result?.unlocked ?? [];
+    const gates = { ...current.gates };
+    granted.forEach((slug) => {
+      if (!gates[slug]?.passed) {
+        gates[slug] = { attempts: 0, passed: true, walkAways: 0, triesUsed: 0 };
+      }
+    });
+    write({
+      ...current,
+      placement: result,
+      placementSeen: true,
+      gates,
+      completed: [...new Set([...current.completed, ...granted])],
+      updatedAt: Date.now(),
+    });
+  }, []);
+
+  const saveExam = useCallback((exam: Progress["exams"][number]) => {
+    ensureLoaded();
+    write({ ...current, exams: [...current.exams, exam], updatedAt: Date.now() });
   }, []);
 
   const skipPlacement = useCallback(() => {
@@ -229,6 +282,8 @@ export function useProgress() {
     recordAnswer,
     openLesson,
     recordGateAttempt,
+    recordWalkAway,
+    saveExam,
     restartLesson,
     savePlacement,
     skipPlacement,

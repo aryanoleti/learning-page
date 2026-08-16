@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node tools/check-questions.mjs && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check:questions": "node tools/check-questions.mjs"
   },
   "dependencies": {
     "geist": "^1.7.2",
