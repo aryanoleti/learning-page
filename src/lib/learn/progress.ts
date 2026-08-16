@@ -32,6 +32,7 @@ function read(): Progress {
       placement: parsed.placement ?? null,
       placementSeen: parsed.placementSeen === true,
       exams: Array.isArray(parsed.exams) ? parsed.exams : [],
+      activeExam: typeof parsed.activeExam === "string" ? parsed.activeExam : null,
       answers: parsed.answers && typeof parsed.answers === "object" ? parsed.answers : {},
       currentLesson: typeof parsed.currentLesson === "string" ? parsed.currentLesson : null,
       updatedAt: typeof parsed.updatedAt === "number" ? parsed.updatedAt : 0,
@@ -205,12 +206,33 @@ export function useProgress() {
   /* The exam opens in its own view. Going back to re-read the lesson is
      allowed, but it costs a try — the questions are answerable from the
      material, so looking it up mid-exam is a different thing from knowing it. */
+  /* Marks an exam as under way. If the reader turns up on the lesson page
+     while this is set, they went back to look something up. */
+  const beginExam = useCallback((slug: string) => {
+    ensureLoaded();
+    if (current.activeExam === slug) return;
+    write({ ...current, activeExam: slug, updatedAt: Date.now() });
+  }, []);
+
+  const endExam = useCallback(() => {
+    ensureLoaded();
+    if (current.activeExam === null) return;
+    write({ ...current, activeExam: null, updatedAt: Date.now() });
+  }, []);
+
   const recordWalkAway = useCallback((slug: string) => {
     ensureLoaded();
+    /* The marker is the guard, and it is checked against the store rather than
+       component state. Effects fire more than once — React double-invokes them
+       in development, and re-renders can repeat them — so a component-level
+       flag let a single departure be billed several times. Clearing the marker
+       here makes any repeat call a no-op. */
+    if (current.activeExam !== slug) return;
     const prev = current.gates[slug] ?? { attempts: 0, passed: false, walkAways: 0, triesUsed: 0 };
     if (prev.passed) return;
     write({
       ...current,
+      activeExam: null,
       gates: {
         ...current.gates,
         [slug]: { ...prev, walkAways: prev.walkAways + 1, triesUsed: prev.triesUsed + 1 },
@@ -283,6 +305,8 @@ export function useProgress() {
     openLesson,
     recordGateAttempt,
     recordWalkAway,
+    beginExam,
+    endExam,
     saveExam,
     restartLesson,
     savePlacement,

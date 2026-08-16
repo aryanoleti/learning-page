@@ -122,6 +122,9 @@ export type Progress = {
   answers: Record<string, StoredAnswer>;
   /** last lesson opened, used by "Continue" */
   currentLesson: string | null;
+  /** slug of an exam that was started and not yet finished — used to charge
+      a try when the reader turns up back on the lesson page */
+  activeExam: string | null;
   /** completed end-of-course exams, newest last */
   exams: ExamResult[];
   updatedAt: number;
@@ -135,6 +138,7 @@ export const EMPTY_PROGRESS: Progress = {
   placementSeen: false,
   answers: {},
   currentLesson: null,
+  activeExam: null,
   exams: [],
   updatedAt: 0,
 };

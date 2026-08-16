@@ -10,16 +10,16 @@ import { ROUTES } from "@/lib/learn/links";
 
 /* The unit check, on its own full-screen page.
 
-   It is opened in a separate tab from the lesson. That is deliberate: the
-   answers are all derivable from the material, so going back to look
-   something up mid-exam is a different act from knowing it — and it costs a
-   try. Leaving this tab while questions are unsubmitted is recorded as a
-   walk-away, counted alongside submissions in `triesUsed`.
+   It is a separate page from the lesson. That is deliberate: the answers are
+   all derivable from the material, so navigating back to look something up
+   mid-exam is a different act from knowing it — and it costs a try. Leaving
+   this page while questions are unsubmitted is recorded as a walk-away,
+   counted alongside submissions in `triesUsed`.
 
    The rule is stated plainly before the questions appear. It is a cost, not
    a trap. */
 export function ExamMode({ lesson }: { lesson: Lesson }) {
-  const { progress, hydrated, recordGateAttempt, recordWalkAway, restartLesson } = useProgress();
+  const { progress, hydrated, recordGateAttempt, restartLesson, beginExam } = useProgress();
   const questions = useMemo(() => unitCheck(lesson), [lesson]);
   const { next } = useMemo(() => lessonNeighbours(lesson.slug), [lesson.slug]);
 
@@ -43,17 +43,13 @@ export function ExamMode({ lesson }: { lesson: Lesson }) {
   );
   const allAnswered = shuffled.every((q) => picks[q.id] !== undefined);
 
-  /* Walk-away detection. Only armed once the questions are on screen and only
-     while the exam is still live, so reading the instructions or looking at a
-     finished result costs nothing. */
-  useEffect(() => {
-    if (!started || locked) return;
-    const onHidden = () => {
-      if (document.hidden && !settled.current) recordWalkAway(lesson.slug);
-    };
-    document.addEventListener("visibilitychange", onHidden);
-    return () => document.removeEventListener("visibilitychange", onHidden);
-  }, [started, locked, lesson.slug, recordWalkAway]);
+  /* Walk-away detection lives on the lesson page, not here.
+
+     Counting departures from this component proved unreliable: React remounts
+     it, effects clean up more than once, and a single exit was billed two or
+     three times. Instead, starting the exam sets a persisted marker; the
+     lesson page charges one try if it ever sees that marker set, and clears
+     it. One departure, one charge, regardless of how the components mount. */
 
   const submit = () => {
     if (!allAnswered || locked) return;
@@ -146,10 +142,9 @@ export function ExamMode({ lesson }: { lesson: Lesson }) {
             </li>
             <li>
               <span className="font-medium text-(--color-fg)">
-                Leaving this tab costs a try.
+                Leaving this page costs a try.
               </span>{" "}
-              Everything you need is in the lesson you just read. Switching away to look something
-              up is recorded, and counts the same as a submitted attempt.
+              Everything you need is in the lesson you just read. Going back to look something up is recorded, and counts the same as a submitted attempt.
             </li>
             <li>
               <span className="font-medium text-(--color-fg)">No answers until the end.</span> If
@@ -162,7 +157,11 @@ export function ExamMode({ lesson }: { lesson: Lesson }) {
         <div className="mt-6 flex flex-wrap gap-3">
           <button
             type="button"
-            onClick={() => setStarted(true)}
+            onClick={() => {
+              settled.current = false;
+              beginExam(lesson.slug);
+              setStarted(true);
+            }}
             className="rounded-lg bg-(--color-brand-500) px-5 py-2.5 text-sm font-semibold text-white hover:bg-(--color-brand-600)"
           >
             Start attempt {gate.attempts + 1} of 2
@@ -192,7 +191,7 @@ export function ExamMode({ lesson }: { lesson: Lesson }) {
       )}
 
       <p className="mb-5 text-xs font-medium uppercase tracking-wide text-(--color-fg-muted)">
-        Attempt {gate.attempts + 1} of 2 · leaving this tab costs a try
+        Attempt {gate.attempts + 1} of 2 · leaving this page costs a try
       </p>
 
       <div className="space-y-8">
@@ -229,14 +228,24 @@ export function ExamMode({ lesson }: { lesson: Lesson }) {
         ))}
       </div>
 
-      <button
-        type="button"
-        onClick={submit}
-        disabled={!allAnswered}
-        className="mt-8 rounded-lg bg-(--color-brand-500) px-6 py-3 text-sm font-semibold text-white hover:bg-(--color-brand-600) disabled:cursor-not-allowed disabled:opacity-45"
-      >
-        {allAnswered ? "Submit both answers" : "Answer both questions"}
-      </button>
+      <div className="mt-8 flex flex-wrap items-center gap-4">
+        <button
+          type="button"
+          onClick={submit}
+          disabled={!allAnswered}
+          className="rounded-lg bg-(--color-brand-500) px-6 py-3 text-sm font-semibold text-white hover:bg-(--color-brand-600) disabled:cursor-not-allowed disabled:opacity-45"
+        >
+          {allAnswered ? "Submit both answers" : "Answer both questions"}
+        </button>
+        {/* An explicit exit. Leaving is allowed and costs a try either way —
+            saying so out loud is fairer than only charging for the back button. */}
+        <Link
+          href={ROUTES.lesson(lesson.slug)}
+          className="text-sm font-medium text-(--color-fg-muted) underline-offset-4 hover:text-(--color-fg) hover:underline"
+        >
+          Go back and re-read (costs a try)
+        </Link>
+      </div>
     </Shell>
   );
 }
@@ -249,7 +258,7 @@ function Tries({ gate }: { gate: { attempts: number; walkAways: number; triesUse
       {gate.walkAways > 0 && (
         <>
           {" "}
-          ({gate.walkAways} from leaving the tab, {gate.attempts} submitted)
+          ({gate.walkAways} from leaving early, {gate.attempts} submitted)
         </>
       )}
     </p>

@@ -21,7 +21,7 @@ import { Breadcrumb, DifficultyTag, ExampleCard, ProgressBar } from "./LearnPiec
    with a two-question gate that must be passed before the next lesson opens.
    There is no "mark as complete" — the only way forward is through. */
 export function LessonReader({ lesson }: { lesson: Lesson }) {
-  const { progress, hydrated, recordAnswer, openLesson, recordGateAttempt, restartLesson } =
+  const { progress, hydrated, recordAnswer, openLesson, restartLesson, recordWalkAway } =
     useProgress();
   const level = getLevel(lesson.levelId);
   const { previous, next, position } = useMemo(() => lessonNeighbours(lesson.slug), [lesson.slug]);
@@ -34,6 +34,12 @@ export function LessonReader({ lesson }: { lesson: Lesson }) {
   useEffect(() => {
     openLesson(lesson.slug);
   }, [lesson.slug, openLesson]);
+
+  /* Arriving here with an exam still marked in progress means the reader left
+     the unit check to come back and read. That costs one try. */
+  useEffect(() => {
+    if (progress.activeExam === lesson.slug) recordWalkAway(lesson.slug);
+  }, [progress.activeExam, lesson.slug, recordWalkAway]);
 
   const gate = progress.gates[lesson.slug] ?? { attempts: 0, passed: false, walkAways: 0, triesUsed: 0 };
   const unlocked = !hydrated || isLessonUnlocked(lesson.slug, progress.completed);
@@ -169,16 +175,16 @@ export function LessonReader({ lesson }: { lesson: Lesson }) {
           </ul>
         </section>
 
-        {/* The unit check lives on its own page, opened in a new tab. Leaving
-            that tab to come back here and re-read costs a try — which is why
-            it is not embedded in the lesson it is testing. */}
+        {/* The unit check lives on its own page in this site. Navigating back
+            here to re-read once it has started costs a try — which is why it
+            is not embedded in the lesson it is testing. */}
         <section className="mt-10 rounded-2xl border-2 border-(--color-border-strong) bg-(--color-surface) p-5 sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-lg font-semibold text-(--color-fg)">Unit check</h2>
               <p className="mt-1 max-w-md text-sm leading-relaxed text-(--color-fg-muted)">
-                Two questions, both from what you just read. Opens in a new tab —
-                coming back here to look something up counts as a try.
+                Two questions, both from what you just read. Once it starts, coming
+                back here to look something up counts as a try.
               </p>
             </div>
             <span className="rounded-full border border-(--color-border) px-3 py-1 text-xs font-medium tabular-nums text-(--color-fg-muted)">
@@ -191,14 +197,12 @@ export function LessonReader({ lesson }: { lesson: Lesson }) {
               {gate.walkAways > 0 && ` (${gate.walkAways} from leaving the exam tab)`}
             </p>
           )}
-          <a
-            href={`/lesson/${lesson.slug}/exam/`}
-            target="_blank"
-            rel="noopener"
+          <Link
+            href={ROUTES.exam(lesson.slug)}
             className="mt-5 inline-block rounded-lg bg-(--color-brand-500) px-5 py-2.5 text-sm font-semibold text-white hover:bg-(--color-brand-600)"
           >
             {gate.passed ? "Review the unit check" : "Open the unit check →"}
-          </a>
+          </Link>
         </section>
 
         {/* Back is always available; forward only after the gate is passed. */}

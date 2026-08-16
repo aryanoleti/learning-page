@@ -24,4 +24,5 @@ export const ROUTES = {
   placement: "/placement/",
   glossary: "/glossary/",
   lesson: (slug: string) => `/lesson/${slug}/`,
+  exam: (slug: string) => `/lesson/${slug}/exam/`,
 };
