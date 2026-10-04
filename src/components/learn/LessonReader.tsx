@@ -97,10 +97,7 @@ export function LessonReader({ lesson }: { lesson: Lesson }) {
 
         <header className="mt-5">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-(--color-fg-muted)">
-            <span>
-              Lesson {position} of {total}
-              {tool ? ` · ${level?.title}` : ""}
-            </span>
+            <span>{`Lesson ${position} of ${total}${tool ? ` · ${level?.title}` : ""}`}</span>
             <span aria-hidden="true">·</span>
             <span>{lessonReadingTime(lesson)} read</span>
             <span aria-hidden="true">·</span>

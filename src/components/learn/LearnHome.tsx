@@ -45,10 +45,11 @@ export function LearnHome() {
           Learn to read a company
         </h1>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-(--color-fg-muted)">
-          Seven levels, {CORE_LESSONS.length} short lessons. Start with what a share actually is and finish
-          able to read a company&apos;s numbers, compare two businesses fairly, and hold a position
-          through a bad month. Then take {TOOL_COURSES.length} short courses on InvestSense&apos;s research
-          tools. Every example uses invented companies — this is education, not advice.
+          {`Seven levels, ${CORE_LESSONS.length} short lessons. `}
+          Start with what a share actually is and finish able to read a company&apos;s numbers,
+          compare two businesses fairly, and hold a position through a bad month.
+          {` Then take ${TOOL_COURSES.length} short courses on InvestSense's research tools. `}
+          Every example uses invented companies — this is education, not advice.
         </p>
       </header>
 
