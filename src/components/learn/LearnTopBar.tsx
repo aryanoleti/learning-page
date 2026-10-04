@@ -1,22 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { FEATURE_REQUIREMENTS } from "@/lib/learn/curriculum";
+import { FEATURE_REQUIREMENTS, getLevel, isToolCourse } from "@/lib/learn/curriculum";
 import { appUrl, ROUTES } from "@/lib/learn/links";
 
 /* Persistent bar across the course.
 
-   The tools listed here live in StockSense, which is a separate site. This
+   The tools listed here live in InvestSense, which is a separate site. This
    course cannot lock or unlock them — browsers scope localStorage per origin,
    so progress recorded here is invisible over there. Rather than show a lock
-   that does nothing, each tool simply says which level explains it. */
+   that does nothing, each tool simply says where it is taught. */
 export function LearnTopBar() {
-  const tools = Object.entries(FEATURE_REQUIREMENTS).map(([key, req]) => ({
-    key,
-    href: appUrl(`/${key}/`),
-    label: req.label,
-    level: req.level,
-  }));
+  const tools = Object.entries(FEATURE_REQUIREMENTS).map(([key, req]) => {
+    const level = getLevel(req.level);
+    return {
+      key,
+      href: appUrl(`/${key}/`),
+      label: req.label,
+      taughtIn: isToolCourse(level) ? `the ${level?.title} course` : `Level ${req.level}`,
+    };
+  });
 
   return (
     <div className="sticky top-0 z-30 border-b border-(--color-border) bg-(--color-bg)/95 backdrop-blur">
@@ -25,18 +28,18 @@ export function LearnTopBar() {
           href={ROUTES.home}
           className="text-sm font-semibold tracking-tight text-(--color-fg) hover:text-(--color-brand-500)"
         >
-          StockSense Learn
+          InvestSense Learn
         </Link>
 
         <nav
-          aria-label="Open StockSense"
+          aria-label="Open InvestSense"
           className="ml-auto flex flex-wrap items-center gap-x-4 gap-y-1"
         >
           {tools.map((tool) => (
             <a
               key={tool.key}
               href={tool.href}
-              title={`Covered in Level ${tool.level}`}
+              title={`Covered in ${tool.taughtIn}`}
               className="text-xs font-medium text-(--color-fg-muted) hover:text-(--color-brand-500)"
             >
               {tool.label}
@@ -46,7 +49,7 @@ export function LearnTopBar() {
             href={appUrl("/dashboard/")}
             className="rounded-lg bg-(--color-brand-500) px-3 py-1.5 text-xs font-semibold text-white hover:bg-(--color-brand-600)"
           >
-            Open StockSense →
+            Open InvestSense →
           </a>
         </nav>
       </div>

@@ -271,7 +271,7 @@ function Shell({ title, children }: { title: string; children: React.ReactNode }
     <main className="min-h-dvh bg-(--color-bg)">
       <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-16">
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-(--color-brand-500)">
-          StockSense Learn
+          InvestSense Learn
         </p>
         <h1 className="mt-3 text-2xl font-semibold tracking-tight text-(--color-fg) sm:text-3xl">
           {title}

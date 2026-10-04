@@ -99,14 +99,14 @@ export function PlacementQuiz() {
               href={appUrl("/dashboard/")}
               className="rounded-lg border border-(--color-border) px-5 py-2.5 text-sm font-medium text-(--color-fg-muted) hover:bg-(--color-surface-2)"
             >
-              Skip for now, open StockSense
+              Skip for now, open InvestSense
             </a>
           </div>
 
           <p className="mt-6 text-xs leading-relaxed text-(--color-fg-muted)">
             This is a suggestion, not a requirement — you can take any level in any order from the
-            course page. Some tools in the app do stay locked until the level that explains them is
-            finished.
+            course page. The InvestSense tools in the bar above each say which level or course
+            explains them.
           </p>
         </div>
       </>
@@ -211,7 +211,7 @@ export function PlacementQuiz() {
             onClick={skipPlacement}
             className="text-sm font-medium text-(--color-fg-muted) hover:text-(--color-fg) hover:underline"
           >
-            Go straight to StockSense
+            Go straight to InvestSense
           </a>
         </div>
       </div>

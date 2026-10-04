@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { PlacementQuiz } from "@/components/learn/PlacementQuiz";
 
 export const metadata: Metadata = {
-  title: "Where should you begin? — StockSense Learn",
+  title: "Where should you begin? — InvestSense Learn",
   description: "A short placement quiz that suggests which levels of the course to take.",
 };
 

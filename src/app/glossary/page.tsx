@@ -6,7 +6,7 @@ import { getLesson } from "@/lib/learn/curriculum";
 import { Breadcrumb } from "@/components/learn/LearnPieces";
 
 export const metadata: Metadata = {
-  title: "Glossary — StockSense Learn",
+  title: "Glossary — InvestSense Learn",
   description:
     "Plain-language definitions of the terms used in the course: P/E, EPS, ROE, debt-to-equity, free cash flow, diversification, volatility and drawdown.",
 };

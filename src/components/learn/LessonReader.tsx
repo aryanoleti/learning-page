@@ -5,13 +5,14 @@ import { useEffect, useMemo } from "react";
 import type { Lesson } from "@/lib/learn/types";
 import {
   getLevel,
+  isToolCourse,
   isLessonUnlocked,
   lessonNeighbours,
   lessonQuestionIds,
   unitCheck,
 } from "@/lib/learn/curriculum";
 import { useProgress } from "@/lib/learn/progress";
-import { ROUTES } from "@/lib/learn/links";
+import { appUrl, ROUTES } from "@/lib/learn/links";
 import { lessonReadingTime, stepReadingTime } from "@/lib/learn/reading";
 import { CheckpointBlock } from "./CheckpointBlock";
 import { LearnTopBar } from "./LearnTopBar";
@@ -24,7 +25,11 @@ export function LessonReader({ lesson }: { lesson: Lesson }) {
   const { progress, hydrated, recordAnswer, openLesson, restartLesson, recordWalkAway } =
     useProgress();
   const level = getLevel(lesson.levelId);
-  const { previous, next, position } = useMemo(() => lessonNeighbours(lesson.slug), [lesson.slug]);
+  const tool = isToolCourse(level);
+  const { previous, next, position, total } = useMemo(
+    () => lessonNeighbours(lesson.slug),
+    [lesson.slug]
+  );
   const questions = useMemo(() => unitCheck(lesson), [lesson]);
   const inlineIds = useMemo(
     () => lesson.steps.filter((s) => s.checkpoint).map((s) => s.checkpoint!.id),
@@ -53,7 +58,7 @@ export function LessonReader({ lesson }: { lesson: Lesson }) {
       <>
         <LearnTopBar />
         <div className="mx-auto w-full max-w-3xl px-4 pb-24 pt-8 sm:px-6 sm:pt-12">
-          <Breadcrumb items={[{ label: "Learn", href: "/learn" }, { label: "Locked" }]} />
+          <Breadcrumb items={[{ label: "Learn", href: ROUTES.home }, { label: "Locked" }]} />
           <div className="mt-8 rounded-2xl border border-(--color-border) bg-(--color-surface) p-6 text-center">
             <h1 className="text-xl font-semibold text-(--color-fg)">This lesson is locked</h1>
             <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-(--color-fg-muted)">
@@ -81,15 +86,21 @@ export function LessonReader({ lesson }: { lesson: Lesson }) {
       <article className="mx-auto w-full max-w-3xl px-4 pb-24 pt-8 sm:px-6 sm:pt-12">
         <Breadcrumb
           items={[
-            { label: "Learn", href: "/learn" },
-            { label: `Level ${lesson.levelId} — ${level?.title ?? ""}`, href: "/learn" },
+            { label: "Learn", href: ROUTES.home },
+            {
+              label: tool ? (level?.title ?? "") : `Level ${lesson.levelId} — ${level?.title ?? ""}`,
+              href: ROUTES.home,
+            },
             { label: lesson.title },
           ]}
         />
 
         <header className="mt-5">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-(--color-fg-muted)">
-            <span>Lesson {position} of 27</span>
+            <span>
+              Lesson {position} of {total}
+              {tool ? ` · ${level?.title}` : ""}
+            </span>
             <span aria-hidden="true">·</span>
             <span>{lessonReadingTime(lesson)} read</span>
             <span aria-hidden="true">·</span>
@@ -243,6 +254,16 @@ export function LessonReader({ lesson }: { lesson: Lesson }) {
                 </span>
               </div>
             )
+          ) : tool && level?.appPath ? (
+            <a
+              href={appUrl(level.appPath)}
+              className="rounded-xl border border-(--color-brand-300) bg-(--color-brand-50) p-4 text-right transition-colors hover:border-(--color-brand-400) dark:bg-(--color-surface-2)"
+            >
+              <span className="text-xs text-(--color-brand-600)">End of this course</span>
+              <span className="mt-1 block text-sm font-medium text-(--color-fg)">
+                Try it in InvestSense →
+              </span>
+            </a>
           ) : (
             <Link
               href={ROUTES.home}

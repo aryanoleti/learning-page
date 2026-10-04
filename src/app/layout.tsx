@@ -5,9 +5,9 @@ import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Learn to read a company — StockSense",
+  title: "Learn to read a company — InvestSense",
   description:
-    "A free seven-level course for beginners: shares, company accounts, financial ratios, portfolio building and staying rational in a falling market. Educational only, using invented companies.",
+    "A free seven-level course for beginners — shares, company accounts, financial ratios, portfolio building and staying rational in a falling market — plus courses on InvestSense's Quant Engine, Deep Research and AI tools. Educational only, using invented companies.",
 };
 
 export const viewport: Viewport = {
@@ -25,8 +25,8 @@ export default function RootLayout({
     >
       <body className="min-h-screen antialiased">
         {/* Apply the saved (or system) theme before paint so there is no flash
-            of the wrong palette. Same storage key as StockSense, though the
-            two sites are separate origins and do not share it. */}
+            of the wrong palette. The key keeps its original name; this site
+            is its own origin, so nothing is shared with InvestSense. */}
         <Script
           id="theme-init"
           strategy="beforeInteractive"

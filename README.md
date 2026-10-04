@@ -1,7 +1,8 @@
-# StockSense Learn
+# InvestSense Learn
 
 A free, standalone course that teaches a beginner how to read a company —
-seven levels, 27 short lessons, no account required.
+seven levels, 27 short lessons, no account required — plus three short
+courses on the research tools in [InvestSense](https://investsense.ai).
 
 Live: https://aryanoleti.github.io/learning-page/
 
@@ -17,7 +18,17 @@ Live: https://aryanoleti.github.io/learning-page/
 | 6 | Survive the Market | 3 |
 | 7 | Think Like an Investor | 3 |
 
-Roughly 189 minutes of reading and 92 questions.
+Roughly 189 minutes of reading and 92 questions in the core levels.
+
+### Research tool courses
+
+Each opens from its first lesson; none requires the core levels.
+
+| Course | What it teaches | Lessons |
+| --- | --- | --- |
+| The Quant Engine | Returns and features, moving averages and MACD, RSI, Bollinger Bands, support/resistance, regimes, EWMA volatility, the ensemble forecast and its 95% band, walk-forward testing against a random walk | 6 |
+| Deep Research | Numbers-first pipeline, specialist AI analysts, the bull/bear debate, the moderator's summary, checking a report yourself | 5 |
+| Ask AI & Compare | How the grounded assistant checks its numbers, asking useful questions, reading a Compare verdict, beta and confidence scores | 3 |
 
 ## How it works
 

@@ -8,6 +8,9 @@ import { LEVEL_4_LESSONS } from "./levels/level4";
 import { LEVEL_5_LESSONS } from "./levels/level5";
 import { LEVEL_6_LESSONS } from "./levels/level6";
 import { LEVEL_7_LESSONS } from "./levels/level7";
+import { QUANT_LESSONS } from "./levels/quant";
+import { RESEARCH_LESSONS } from "./levels/research";
+import { AI_TOOLS_LESSONS } from "./levels/aiTools";
 
 /* The curriculum map. Adding a lesson means editing one level file and
    nothing else — counts, progress and routing all derive from here. */
@@ -71,8 +74,53 @@ export const LEVELS: Level[] = [
   },
 ];
 
-/** Every lesson in course order — the reading sequence. */
-export const ALL_LESSONS: Lesson[] = LEVELS.flatMap((l) => l.lessons);
+/* Courses on InvestSense's research tools. Each is a short path of its own:
+   it opens from its first lesson, so a reader who only wants to understand
+   the Quant Engine does not have to finish all seven levels first. */
+export const TOOL_COURSES: Level[] = [
+  {
+    id: 8,
+    track: "tool",
+    title: "The Quant Engine",
+    theme: "Indicators, forecasts and how they are tested",
+    blurb:
+      "What the Quant Engine computes from price history, how to read its forecast band, and why a model has to beat a random walk before it counts.",
+    lessons: QUANT_LESSONS,
+    appPath: "/quant/",
+    recommendedAfter: [1, 6],
+  },
+  {
+    id: 9,
+    track: "tool",
+    title: "Deep Research",
+    theme: "AI analysts, the bull/bear debate and checking the work",
+    blurb:
+      "How a multi-agent research report is put together — numbers first, then specialist analysts, a debate and a moderator — and how to check one yourself.",
+    lessons: RESEARCH_LESSONS,
+    appPath: "/research/",
+    recommendedAfter: [3, 4],
+  },
+  {
+    id: 10,
+    track: "tool",
+    title: "Ask AI & Compare",
+    theme: "Asking good questions and reading an AI verdict",
+    blurb:
+      "How the assistant keeps its numbers honest, how to ask questions that get useful answers, and how to read a Compare verdict and its confidence score.",
+    lessons: AI_TOOLS_LESSONS,
+    appPath: "/ask-ai/",
+    recommendedAfter: [4],
+  },
+];
+
+/** The seven core levels in reading order — the main path. */
+export const CORE_LESSONS: Lesson[] = LEVELS.flatMap((l) => l.lessons);
+
+/** Every lesson on the site, core path first, then the tool courses. */
+export const ALL_LESSONS: Lesson[] = [
+  ...CORE_LESSONS,
+  ...TOOL_COURSES.flatMap((c) => c.lessons),
+];
 
 export const TOTAL_LESSONS = ALL_LESSONS.length;
 
@@ -91,21 +139,37 @@ export function getLesson(slug: string): Lesson | undefined {
 }
 
 export function getLevel(id: number): Level | undefined {
-  return LEVELS.find((l) => l.id === id);
+  return LEVELS.find((l) => l.id === id) ?? TOOL_COURSES.find((l) => l.id === id);
 }
 
-/** Position in the overall reading order, used for next/previous links. */
+export function isToolCourse(level: Level | undefined): boolean {
+  return level?.track === "tool";
+}
+
+/* The path a lesson belongs to: the core levels for Levels 1-7, otherwise
+   the one tool course it sits in. Order, unlocking and next/previous links
+   all run within this path. */
+function pathFor(slug: string): Lesson[] {
+  const lesson = BY_SLUG.get(slug);
+  const course = lesson ? TOOL_COURSES.find((c) => c.id === lesson.levelId) : undefined;
+  return course ? course.lessons : CORE_LESSONS;
+}
+
+/** Position within the lesson's own path, used for next/previous links. */
 export function lessonNeighbours(slug: string): {
   previous: Lesson | null;
   next: Lesson | null;
   position: number;
+  total: number;
 } {
-  const i = ALL_LESSONS.findIndex((l) => l.slug === slug);
-  if (i === -1) return { previous: null, next: null, position: 0 };
+  const path = pathFor(slug);
+  const i = path.findIndex((l) => l.slug === slug);
+  if (i === -1) return { previous: null, next: null, position: 0, total: path.length };
   return {
-    previous: i > 0 ? ALL_LESSONS[i - 1] : null,
-    next: i < ALL_LESSONS.length - 1 ? ALL_LESSONS[i + 1] : null,
+    previous: i > 0 ? path[i - 1] : null,
+    next: i < path.length - 1 ? path[i + 1] : null,
     position: i + 1,
+    total: path.length,
   };
 }
 
@@ -122,15 +186,29 @@ export function lessonQuestionIds(lesson: Lesson): string[] {
 export const FEATURE_HOOKS: FeatureHook[] = [
   {
     id: "analysis",
-    label: "Company analysis",
-    description: "Apply Level 3 ratios to live NSE companies in the quant workbench.",
+    label: "Stock pages",
+    description: "Read Level 3 figures — P/E, EPS, market cap — on live NSE company pages.",
+    href: appUrl("/stocks/"),
+    ready: true,
+  },
+  {
+    id: "quant",
+    label: "Quant Engine",
+    description: "Indicators, a 7-day forecast and its confidence band. Taught in The Quant Engine course.",
     href: appUrl("/quant/"),
     ready: true,
   },
   {
+    id: "research",
+    label: "Deep Research",
+    description: "Specialist AI analysts and a bull/bear debate. Taught in the Deep Research course.",
+    href: appUrl("/research/"),
+    ready: true,
+  },
+  {
     id: "simulator",
-    label: "Portfolio simulator",
-    description: "Practise Level 5 allocation with ₹5,00,000 of virtual capital.",
+    label: "Portfolio",
+    description: "Practise Level 5 allocation and track what you hold.",
     href: appUrl("/portfolio/"),
     ready: true,
   },
@@ -160,19 +238,21 @@ export function unitCheck(lesson: Lesson): Checkpoint[] {
   return second ? [lesson.finalQuiz, second] : [lesson.finalQuiz];
 }
 
-/** Lessons unlock in order: a lesson opens once the one before it is passed. */
+/** Lessons unlock in order within their path: a lesson opens once the one
+    before it is passed, and the first lesson of every path is always open. */
 export function isLessonUnlocked(slug: string, passed: string[]): boolean {
-  const i = ALL_LESSONS.findIndex((l) => l.slug === slug);
+  const path = pathFor(slug);
+  const i = path.findIndex((l) => l.slug === slug);
   if (i <= 0) return true;
-  return passed.includes(ALL_LESSONS[i - 1].slug);
+  return passed.includes(path[i - 1].slug);
 }
 
-/** The furthest lesson the reader is allowed to open. */
+/** The furthest core lesson the reader is allowed to open. */
 export function furthestUnlocked(passed: string[]): Lesson {
-  for (const lesson of ALL_LESSONS) {
+  for (const lesson of CORE_LESSONS) {
     if (!passed.includes(lesson.slug)) return lesson;
   }
-  return ALL_LESSONS[ALL_LESSONS.length - 1];
+  return CORE_LESSONS[CORE_LESSONS.length - 1];
 }
 
 /* Which level a given app feature requires. Gating is by level, not by
@@ -180,9 +260,14 @@ export function furthestUnlocked(passed: string[]): Lesson {
    teaching that explains how to read it. */
 export const FEATURE_REQUIREMENTS: Record<string, { level: number; label: string; why: string }> = {
   quant: {
-    level: 3,
-    label: "Quant engine",
-    why: "The workbench reports P/E, EPS, ROE, debt-to-equity and margins. Level 3 teaches what each one means and how it can mislead.",
+    level: 8,
+    label: "Quant Engine",
+    why: "The engine reports indicators, a regime label, EWMA volatility and a forecast with a confidence band. The Quant Engine course explains each one and how the forecasts are tested.",
+  },
+  research: {
+    level: 9,
+    label: "Deep Research",
+    why: "Deep Research combines specialist AI analysts, a bull/bear debate and a moderator. The Deep Research course explains how to read and check the report.",
   },
   compare: {
     level: 4,

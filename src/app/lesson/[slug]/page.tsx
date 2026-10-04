@@ -16,9 +16,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const lesson = getLesson(slug);
-  if (!lesson) return { title: "Lesson not found — StockSense Learn" };
+  if (!lesson) return { title: "Lesson not found — InvestSense Learn" };
   return {
-    title: `${lesson.title} — StockSense Learn`,
+    title: `${lesson.title} — InvestSense Learn`,
     description: lesson.goal,
   };
 }

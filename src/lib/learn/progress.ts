@@ -11,6 +11,7 @@ import { ALL_LESSONS, TOTAL_LESSONS, lessonQuestionIds, getLesson } from "./curr
    component owning its own copy, so a checkpoint answered in the reader
    updates the level cards behind it immediately. */
 
+// Keeps its pre-rename name: changing it would wipe every reader's saved progress.
 const KEY = "stocksense.learn.progress.v3";
 
 let current: Progress = EMPTY_PROGRESS;

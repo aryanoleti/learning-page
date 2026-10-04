@@ -60,6 +60,13 @@ export type Level = {
   theme: string;
   blurb: string;
   lessons: Lesson[];
+  /** "core" levels form one path that unlocks in order; each "tool" course
+      is its own short path, open from its first lesson */
+  track?: "core" | "tool";
+  /** for tool courses: the InvestSense page the course teaches */
+  appPath?: string;
+  /** for tool courses: core levels that make the course easier to follow */
+  recommendedAfter?: number[];
 };
 
 export type GlossaryTerm = {
@@ -169,7 +176,7 @@ export type ExamResult = {
 /* Hooks for features this course will connect to later. Kept as data so the
    navigation can render them before the integrations exist. */
 export type FeatureHook = {
-  id: "simulator" | "analysis" | "profile" | "dashboard";
+  id: "simulator" | "analysis" | "quant" | "research" | "profile" | "dashboard";
   label: string;
   description: string;
   href: string;

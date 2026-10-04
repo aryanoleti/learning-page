@@ -404,4 +404,184 @@ export const SECOND_QUESTIONS: Record<string, Checkpoint> = {
     explain:
       "One year is a small sample and six simultaneous changes are confounded. Changing one thing at a time is what makes any effect readable.",
   },
+
+  /* ---------------- Course: The Quant Engine ---------------- */
+  "quant-price-history-as-data": {
+    id: "l8-1-q2",
+    question:
+      "Two people run the same indicator on the same price history and get different values. What does that tell you?",
+    options: [
+      "Indicators are a matter of opinion and judgement",
+      "One used different inputs or made an error",
+      "The market moved between the two calculations",
+      "One of them must have used AI to compute it",
+    ],
+    answer: 1,
+    explain:
+      "The engine's calculations are deterministic: the same history always gives the same number. A difference means different inputs or a mistake.",
+  },
+  "quant-moving-averages-macd": {
+    id: "l8-2-q2",
+    question:
+      "Five closes: ₹100, ₹104, ₹96, ₹110, ₹90. The 5-day SMA is ₹100 — the same as for five flat closes of ₹100. What does the average hide?",
+    options: [
+      "What the average price over the days was",
+      "How far prices swung around it",
+      "How many days went into the calculation",
+      "Which stock the prices belong to",
+    ],
+    answer: 1,
+    explain:
+      "An average says where prices centred, not how much they moved. A ₹20 swing and a flat line can share the same SMA — which is why volatility is measured separately.",
+  },
+  "quant-rsi-bollinger-levels": {
+    id: "l8-3-q2",
+    question:
+      "Over 14 days the average gain on up days is ₹4 and the average loss on down days is ₹1. What is the RSI?",
+    options: ["75", "80", "20", "400"],
+    answer: 1,
+    explain: "RS = 4 ÷ 1 = 4, so RSI = 100 − 100 ÷ (1 + 4) = 100 − 20 = 80.",
+  },
+  "quant-regimes-volatility": {
+    id: "l8-4-q2",
+    question:
+      "Yesterday's volatility was 2% and yesterday's return was 0%. With λ = 0.94, roughly what is today's EWMA volatility?",
+    options: ["About 1.88%", "About 1.94%", "Exactly 2%", "About 2.12%"],
+    answer: 1,
+    explain:
+      "Work in variance: 2% squared is 4, and 0.94 × 4 + 0.06 × 0 = 3.76. The square root is about 1.94%. Multiplying the volatility itself by 0.94 (giving 1.88%) skips the squaring.",
+  },
+  "quant-forecast-band": {
+    id: "l8-5-q2",
+    question:
+      "Over 100 weeks, a model's 95% band missed the actual price 14 times. What does that suggest?",
+    options: [
+      "About right — some misses are expected",
+      "The band was too narrow and understated risk",
+      "The model is too cautious and should narrow",
+      "Fourteen misses prove forecasts are useless",
+    ],
+    answer: 1,
+    explain:
+      "A 95% band should miss about 5 times in 100. Fourteen misses means outcomes strayed outside far more often than claimed — the band understated the uncertainty.",
+  },
+  "quant-testing-forecasts": {
+    id: "l8-6-q2",
+    question:
+      "Model A has an RMSE of ₹4.0 and 52% directional accuracy. The random walk's RMSE is ₹3.8. Under the rule in this lesson, should A get weight in the ensemble?",
+    options: [
+      "Yes — 52% is better than a coin flip",
+      "No — it does not beat the random walk",
+      "Yes — every extra model adds diversity",
+      "Only if its MAPE comes in under 5%",
+    ],
+    answer: 1,
+    explain:
+      "A model earns weight only by beating the baseline. Larger errors than 'tomorrow equals today' mean it adds nothing, whatever its directional score.",
+  },
+
+  /* ---------------- Course: Deep Research ---------------- */
+  "research-numbers-first": {
+    id: "l9-1-q2",
+    question:
+      "A report's numbers are all traced. Which sentence in it needs your own judgement most?",
+    options: [
+      "Net margin was 5% last year",
+      "Debt-to-equity stands at 1.4",
+      "Margins will likely recover soon",
+      "Revenue was ₹6,500 cr last year",
+    ],
+    answer: 2,
+    explain:
+      "The other three are figures the pipeline traced. A claim about where margins are heading is interpretation, and nothing traced it.",
+  },
+  "research-specialist-analysts": {
+    id: "l9-2-q2",
+    question:
+      "Lumen Labs trades at ₹720 with EPS of ₹18. A valuation analyst flags its P/E. What is it, and what does it alone tell you?",
+    options: [
+      "40 — the market expects strong growth",
+      "40 — it is overpriced and so will fall",
+      "18 — earnings are low for a software firm",
+      "4 — the price is low relative to profit",
+    ],
+    answer: 0,
+    explain:
+      "₹720 ÷ ₹18 = 40. Level 3 showed that a high P/E states the market's growth expectations — it is not, by itself, a verdict that the price will fall.",
+  },
+  "research-bull-bear-debate": {
+    id: "l9-3-q2",
+    question: "Which bear argument about Ironvale Works carries the most weight, given its figures?",
+    options: [
+      "Its share price is lower than Lumen Labs'",
+      "It sells heavy equipment, which is unfashionable",
+      "Thin margins plus heavy debt leave little room",
+      "It has more shares than most of its peers do",
+    ],
+    answer: 2,
+    explain:
+      "A 5% margin with debt-to-equity of 1.4 is a real fragility. Share price level, share count and fashion say nothing about the business.",
+  },
+  "research-moderator": {
+    id: "l9-4-q2",
+    question: "Which part of a moderator summary is most useful for writing your own reversal conditions?",
+    options: [
+      "The overall lean it states at the top",
+      "Points it marks as unresolved, and why",
+      "The number of arguments each side made",
+      "How confident the bull analyst sounded",
+    ],
+    answer: 1,
+    explain:
+      "Unresolved points are exactly the uncertainties that could prove a view wrong — the raw material for 'I would reconsider if…'.",
+  },
+  "research-checking-the-report": {
+    id: "l9-5-q2",
+    question:
+      "Coral & Co has ₹288 cr of profit and ₹250 cr of free cash flow. A report says 'profits are fully backed by cash'. How should you mark it?",
+    options: [
+      "Accurate — cash covers all of the profit",
+      "Overstated — about 87% is backed by cash",
+      "Understated — cash is higher than profit",
+      "Irrelevant — cash flow does not matter",
+    ],
+    answer: 1,
+    explain: "₹250 ÷ ₹288 ≈ 87%. Most of the profit is backed by cash, but not all of it.",
+  },
+
+  /* ---------------- Course: Ask AI & Compare ---------------- */
+  "ai-grounded-assistant": {
+    id: "l10-1-q2",
+    question: "In an AI answer about a stock, which of these should make you most suspicious?",
+    options: [
+      "A note that a figure could not be retrieved",
+      "A precise number with no source you can find",
+      "A refusal to say whether you should buy",
+      "A note that a company is outside coverage",
+    ],
+    answer: 1,
+    explain:
+      "The other three are a grounded assistant behaving correctly. A precise figure you cannot trace is exactly what grounding exists to prevent.",
+  },
+  "ai-asking-good-questions": {
+    id: "l10-2-q2",
+    question: "Which question best tests whether your own view could be wrong?",
+    options: [
+      "Why is this company a strong investment?",
+      "What evidence would contradict my view?",
+      "Which analysts agree with what I think?",
+      "How much has the price risen this year?",
+    ],
+    answer: 1,
+    explain:
+      "Only this one asks for disconfirming evidence. The others invite reasons to keep believing what you already believe.",
+  },
+  "ai-reading-a-verdict": {
+    id: "l10-3-q2",
+    question:
+      "Stock A has a beta of 1.5. The market falls 4% in a day. Based on beta alone, roughly what move would you expect from A?",
+    options: ["A fall of about 6%", "A fall of about 4%", "A fall of about 2.7%", "A rise of about 6%"],
+    answer: 0,
+    explain: "Beta 1.5 means it has tended to move 1.5 times the market: 1.5 × −4% = −6%.",
+  },
 };
