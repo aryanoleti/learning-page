@@ -67,6 +67,8 @@ export type Level = {
   appPath?: string;
   /** for tool courses: core levels that make the course easier to follow */
   recommendedAfter?: number[];
+  /** for tool courses: this course's notebook in InvestSense Notebook */
+  notebookId?: string;
 };
 
 export type GlossaryTerm = {

@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Lesson } from "@/lib/learn/types";
-import { unitCheck, lessonNeighbours, lessonQuestionIds } from "@/lib/learn/curriculum";
+import { unitCheck, lessonNeighbours, lessonQuestionIds, getLevel } from "@/lib/learn/curriculum";
 import { shuffleCheckpoint } from "@/lib/learn/shuffle";
 import { useProgress } from "@/lib/learn/progress";
-import { ROUTES } from "@/lib/learn/links";
+import { notebookUrl, ROUTES } from "@/lib/learn/links";
 
 /* The unit check, on its own full-screen page.
 
@@ -22,6 +22,7 @@ export function ExamMode({ lesson }: { lesson: Lesson }) {
   const { progress, hydrated, recordGateAttempt, restartLesson, beginExam } = useProgress();
   const questions = useMemo(() => unitCheck(lesson), [lesson]);
   const { next } = useMemo(() => lessonNeighbours(lesson.slug), [lesson.slug]);
+  const notebookId = next ? undefined : getLevel(lesson.levelId)?.notebookId;
 
   const [started, setStarted] = useState(false);
   const [picks, setPicks] = useState<Record<string, number>>({});
@@ -76,7 +77,22 @@ export function ExamMode({ lesson }: { lesson: Lesson }) {
           unlocked.
         </p>
         <Tries gate={gate} />
+        {notebookId && (
+          <p className="mt-4 text-sm leading-relaxed text-(--color-fg-muted)">
+            That was the last lesson — the course is finished. Its notebook is now unlocked: ask
+            questions about the whole course, or turn it into an audio overview, slides, a quiz or
+            flashcards.
+          </p>
+        )}
         <div className="mt-6 flex flex-wrap gap-3">
+          {notebookId && (
+            <a
+              href={notebookUrl(notebookId)}
+              className="rounded-lg bg-(--color-brand-500) px-5 py-2.5 text-sm font-semibold text-white hover:bg-(--color-brand-600)"
+            >
+              Open the course notebook →
+            </a>
+          )}
           {next && (
             <Link
               href={ROUTES.lesson(next.slug)}

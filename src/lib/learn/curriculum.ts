@@ -88,6 +88,7 @@ export const TOOL_COURSES: Level[] = [
     lessons: QUANT_LESSONS,
     appPath: "/quant/",
     recommendedAfter: [1, 6],
+    notebookId: "quant",
   },
   {
     id: 9,
@@ -99,6 +100,7 @@ export const TOOL_COURSES: Level[] = [
     lessons: RESEARCH_LESSONS,
     appPath: "/research/",
     recommendedAfter: [3, 4],
+    notebookId: "research",
   },
   {
     id: 10,
@@ -110,6 +112,7 @@ export const TOOL_COURSES: Level[] = [
     lessons: AI_TOOLS_LESSONS,
     appPath: "/ask-ai/",
     recommendedAfter: [4],
+    notebookId: "ai",
   },
 ];
 

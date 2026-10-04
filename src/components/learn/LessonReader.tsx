@@ -12,7 +12,7 @@ import {
   unitCheck,
 } from "@/lib/learn/curriculum";
 import { useProgress } from "@/lib/learn/progress";
-import { appUrl, ROUTES } from "@/lib/learn/links";
+import { appUrl, notebookUrl, ROUTES } from "@/lib/learn/links";
 import { lessonReadingTime, stepReadingTime } from "@/lib/learn/reading";
 import { CheckpointBlock } from "./CheckpointBlock";
 import { LearnTopBar } from "./LearnTopBar";
@@ -212,6 +212,28 @@ export function LessonReader({ lesson }: { lesson: Lesson }) {
             {gate.passed ? "Review the unit check" : "Open the unit check →"}
           </Link>
         </section>
+
+        {tool && !next && level?.notebookId && (
+          <section className="mt-6 rounded-2xl border border-(--color-brand-300) bg-(--color-brand-50) p-5 sm:p-6 dark:bg-(--color-surface-2)">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-(--color-brand-600)">
+              End of the course
+            </p>
+            <h2 className="mt-2 text-lg font-semibold text-(--color-fg)">
+              Study {level.title} in its notebook
+            </h2>
+            <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-(--color-fg-muted)">
+              Ask questions about every lesson in this course, or turn it into an audio overview,
+              a slide deck, a quiz or flashcards.
+              {!gate.passed && " The notebook unlocks once this unit check is passed."}
+            </p>
+            <a
+              href={notebookUrl(level.notebookId)}
+              className="mt-4 inline-flex items-center gap-2 rounded-lg bg-(--color-brand-500) px-5 py-2.5 text-sm font-semibold text-white hover:bg-(--color-brand-600)"
+            >
+              Open the course notebook <span aria-hidden="true">→</span>
+            </a>
+          </section>
+        )}
 
         {/* Back is always available; forward only after the gate is passed. */}
         <nav aria-label="Lesson navigation" className="mt-8 grid gap-3 sm:grid-cols-2">
